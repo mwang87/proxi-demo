@@ -31,13 +31,13 @@ end
 
 get '/peptide/query/:peptide' do
     query_peptide = params[:peptide]
-    peptide_object = Peptide.first(:sequence => query_peptide)
+    peptide_object = Basicpeptide.first(:sequence => query_peptide)
     
     if peptide_object == nil
         return "{}"
     end
     
-    return peptide_object.datasets.to_json()
+    return peptide_object.peptides.datasets.to_json()
 end
 
 
