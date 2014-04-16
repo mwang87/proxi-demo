@@ -1,0 +1,15 @@
+%h1.text-center.padding-large-vertical Create Peptide Connection
+
+.create_peptidelink_form
+    %form{:action => "/peptide/create", :method => "post"}
+        .form-group
+            %label{:for => "Peptide"} Peptide
+            %input.form-control{:type => "text", :name => "peptide", :class => "text", :placeholder => "Peptide Sequence"}
+        .form-group
+            %label{:for => "Dataset"} Dataset
+            %input.form-control{:type => "text", :name => "dataset"}
+            
+        %input.btn.btn-default{:type => "submit"}
+                
+                
+                
