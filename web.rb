@@ -41,6 +41,18 @@ get '/peptide/query/:peptide' do
 end
 
 
+get '/peptide/querymod/:peptide' do
+    query_peptide = params[:peptide]
+    peptide_object = Basicpeptide.first(:sequence => query_peptide)
+    
+    if peptide_object == nil
+        return "{}"
+    end
+    
+    return peptide_object.peptides.to_json()
+end
+
+
 get '/peptide/create' do
     haml :peptidecreatelink
 end
