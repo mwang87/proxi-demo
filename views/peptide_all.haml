@@ -1,0 +1,4 @@
+- @all_peptides.each do |peptide|
+    %a{:href=>"/peptide/query/#{peptide.sequence}"} #{peptide.sequence}
+    - mod_string = peptide.sequence + "_mod"
+    %a{:href=>"/peptide/querymod/#{peptide.sequence}"} #{mod_string}

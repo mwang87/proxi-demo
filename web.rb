@@ -23,10 +23,13 @@ get '/' do
     "PROXI Demo"
 end
 
+get '/peptide/all.json' do
+    return BasicPeptide.all.to_json
+end
+
 get '/peptide/all' do
-    puts Peptide.all()
-    puts "ALL"
-    return Peptide.all.to_json
+    @all_peptides = Basicpeptide.all
+    haml :peptide_all
 end
 
 get '/peptide/query/:peptide' do
@@ -52,6 +55,26 @@ get '/peptide/querymod/:peptide' do
     return peptide_object.peptides.to_json()
 end
 
+get '/protein/all' do
+    @all_proteins = Protein.all
+    
+    haml :protein_all
+end
+
+get '/protein/all.json' do
+    return Protein.all.to_json
+end
+
+get '/protein/query/:protein' do
+    query_protein = params[:protein]
+    protein_object = Protein.first(:name => query_protein)
+    
+    if protein_object == nil
+        return "{}"
+    end
+    
+    return protein_object.datasets.to_json()
+end
 
 get '/peptide/create' do
     haml :peptidecreatelink
@@ -68,6 +91,27 @@ post '/peptide/create' do
     puts dataset_db
     
     join_db = create_dataset_peptide_link(peptide_db, dataset_db)
+    
+    if(join_db == nil)
+        return "DNS"
+    end
+    
+    return "SAVED"
+end
+
+get '/protein/create' do
+    haml :proteincreatelink
+end
+
+post '/protein/create' do
+    puts params
+    protein = params[:protein]
+    dataset = params[:dataset]
+    
+    protein_db = get_create_protein(protein)
+    dataset_db = get_create_dataset(dataset)
+    
+    join_db = create_dataset_protein_link(protein_db, dataset_db)
     
     if(join_db == nil)
         return "DNS"
