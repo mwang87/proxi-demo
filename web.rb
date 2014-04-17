@@ -24,7 +24,7 @@ get '/' do
 end
 
 get '/peptide/all.json' do
-    return BasicPeptide.all.to_json
+    return Basicpeptide.all.to_json
 end
 
 get '/peptide/all' do
