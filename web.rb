@@ -26,6 +26,20 @@ end
 get '/peptide/all' do
     #@all_peptides = Basicpeptide.all
     page_number = 1
+    if params[:page] != nil
+        page_number = params[:page].to_i
+    end
+
+    #Determining next and prev page
+    if page_number == 1
+        @next_page = page_number + 1
+        @previous_page = nil
+    else
+        @next_page = page_number + 1
+        @previous_page = page_number - 1
+    end
+
+
     @all_peptides = Peptide.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
     haml :peptide_all
 end

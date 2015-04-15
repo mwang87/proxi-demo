@@ -1,3 +1,18 @@
-- @all_peptides.each do |peptide|
-    %a{:href=>"/peptide/#{peptide.sequence}"} #{peptide.sequence} #{peptide.datasets.length} 
-    %br
+- if @next_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@next_page}"} Next Page
+- if @previous_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}"} Prev Page
+
+
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th Sequence
+            %th Dataset Counts
+    - @all_peptides.each do |peptide|
+        %tr
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/peptide/#{peptide.sequence}"} View
+            %td{:style=>"vertical-align:middle"}= peptide.sequence
+            %td{:style=>"vertical-align:middle"}= peptide.datasets.length
