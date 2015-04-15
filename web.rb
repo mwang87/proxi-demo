@@ -16,6 +16,7 @@ require './controllers/peptide_controller'
 require './controllers/dataset_controller'
 require './controllers/variant_controller'
 require './controllers/protein_controller'
+require './utils/utils'
 
 get '/' do
     haml :homepage
@@ -49,11 +50,7 @@ get '/peptide/querymod/:peptide' do
     return peptide_object.peptides.to_json()
 end
 
-get '/protein/all' do
-    @all_proteins = Protein.all
-    
-    haml :protein_all
-end
+
 
 get '/protein/all.json' do
     return Protein.all.to_json

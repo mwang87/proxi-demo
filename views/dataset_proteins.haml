@@ -1,0 +1,10 @@
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th Protein Name
+    - @proteins.each do |protein|
+        %tr
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/dataset/#{@datasetid}/protein/#{protein.id}/peptide/list"} View Peptides
+            %td{:style=>"vertical-align:middle"}= protein.name
