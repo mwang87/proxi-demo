@@ -1,17 +1,24 @@
+def get_create_psm(peptide_db, dataset_db, tab_file, scan_number, filename)
+    join_dataset_peptide = DatasetPeptide.first(:dataset => dataset_db, :peptide => peptide_db)    
+    psm = Datasetpeptidespectrummatch.create(:filename => filename, :scan => scan_number, :tabfile => tab_file, :DatasetPeptide => join_dataset_peptide)
+
+end
+
+
 def get_create_peptide(peptide_sequence)
     peptide_object = Peptide.first_or_create(:sequence => peptide_sequence)
     
     #stripping out PTMs from peptide object
     stripped_sequence = peptide_sequence.gsub(/\W+/, '').gsub(/\d\s?/, '')
-    puts peptide_sequence
-    puts "STRIPPED: " + stripped_sequence
+    #puts peptide_sequence
+    #puts "STRIPPED: " + stripped_sequence
     basic_peptide_object = Basicpeptide.first_or_create(:sequence => stripped_sequence)
     basic_peptide_object.save
     
     peptide_object.basicpeptide = basic_peptide_object
-    puts peptide_object.sequence
+    #puts peptide_object.sequence
     if peptide_object.save
-        puts "SAVED"
+        #puts "SAVED"
     end
     return peptide_object
 end
@@ -32,7 +39,7 @@ def get_create_protein(protein_name)
     protein_object = Protein.first_or_create(:name => protein_name)
     
     if protein_object.save
-        puts "SAVED"
+        #puts "SAVED"
     end
     return protein_object
 end

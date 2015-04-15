@@ -3,6 +3,7 @@
 require 'json'
 require '../settings'
 require '../models'
+require '../controller_peptide'
 require 'net/http'
 
 
@@ -93,19 +94,32 @@ def import_results_dataset(dataset_id)
     tabs_list = JSON.parse(http_get(tab_list_url))["blockData"]
     tabs_list.each { |tab_object| 
 	tab_file = tab_object["MzTab_file"]
-	import_dataset_tab_file(dataset_id, task_id, tab_file, root_url)
+	import_dataset_tab_psm_file(dataset_id, task_id, tab_file, root_url)
     }
 end
 
-def import_dataset_tab_file(dataset_id, task_id, tsv_id, root_url)
+def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     tab_information_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=group_by_spectrum&file=" + tsv_id
     tab_data = JSON.parse(http_get(tab_information_url))["blockData"]
     
+    psm_count = 0
+    
     tab_data.each{ |psm_object|
+        psm_count += 1
+        puts psm_count.to_s + " of " + tab_data.length.to_s
 	spectrum_file = psm_object["#SpecFile"]
 	scan =  psm_object["nativeID_scan"]
-	peptide = psm_object["modified_sequence"]
+        peptide = psm_object["modified_sequence"]
 	
+    
+        peptide_db = get_create_peptide(peptide)
+        #puts peptide_db
+        dataset_db = get_create_dataset(dataset_id)
+        #puts dataset_db
+        
+        join_db = create_dataset_peptide_link(peptide_db, dataset_db)
+    
+        get_create_psm(peptide_db, dataset_db, tsv_id, scan, spectrum_file)
     }
 end
 

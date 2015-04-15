@@ -4,6 +4,16 @@ require 'dm-constraints'
 
 DataMapper::Property::String.length(255)
 
+class Datasetpeptidespectrummatch
+    include DataMapper::Resource
+    property :id,               Serial
+    property :filename,         String
+    property :scan,             String
+    property :tabfile,          String
+    
+    belongs_to :DatasetPeptide
+end
+
 class Peptide
     include DataMapper::Resource
     property :id,               Serial
@@ -25,8 +35,10 @@ class DatasetPeptide
     include DataMapper::Resource
     property :id,               Serial
     
+    #has n, :datasetpeptidespectrummatch
     belongs_to :peptide
     belongs_to :dataset
+    
 end
 
 class DatasetProtein
@@ -61,5 +73,6 @@ Dataset.auto_migrate! unless Dataset.storage_exists?
 Protein.auto_migrate! unless Protein    .storage_exists?
 DatasetPeptide.auto_migrate! unless DatasetPeptide.storage_exists?
 DatasetProtein.auto_migrate! unless DatasetProtein.storage_exists?
+Datasetpeptidespectrummatch.auto_migrate! unless Datasetpeptidespectrummatch.storage_exists?
 DataMapper.auto_upgrade!
 

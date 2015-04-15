@@ -15,10 +15,6 @@ require './models'
 require './controller_peptide'
 
 
-setting_initialize();
-
-
-
 get '/' do
     "PROXI Demo"
 end
@@ -28,20 +24,38 @@ get '/peptide/all.json' do
 end
 
 get '/peptide/all' do
-    @all_peptides = Basicpeptide.all
+    #@all_peptides = Basicpeptide.all
+    @all_peptides = Peptide.all
     haml :peptide_all
 end
 
-get '/peptide/query/:peptide' do
+get '/peptide/:peptide' do
     query_peptide = params[:peptide]
-    peptide_object = Basicpeptide.first(:sequence => query_peptide)
+    peptide_object = Peptide.first(:sequence => query_peptide)
     
     if peptide_object == nil
         return "{}"
     end
     
-    return peptide_object.peptides.datasets.to_json()
+    @datasets = peptide_object.datasets
+    @peptide = query_peptide
+    haml :peptide_datasets
+    #return peptide_object.datasets.to_json()
+    
+    #return peptide_object.peptides.datasets.to_json()
 end
+
+get '/peptide/:peptide/dataset/:dataset' do
+    peptide_db = Peptide.first(:sequence => params[:peptide])
+    dataset_db = Dataset.first(:name => params[:dataset])
+    
+    join_dataset_peptide = DatasetPeptide.first(:dataset => dataset_db, :peptide => peptide_db)
+    
+    psms = Datasetpeptidespectrummatch.all(:DatasetPeptide => join_dataset_peptide)
+
+    psms.to_json()
+end
+
 
 
 get '/peptide/querymod/:peptide' do
