@@ -17,7 +17,7 @@ end
 class Peptide
     include DataMapper::Resource
     property :id,               Serial
-    property :sequence,         String, :key => true
+    property :sequence,         String, :key => true, :index => true
     
     has n, :datasets, :through => :datasetpeptide
     belongs_to :basicpeptide
@@ -26,7 +26,7 @@ end
 class Basicpeptide
     include DataMapper::Resource
     property :id,               Serial
-    property :sequence,         String, :key => true
+    property :sequence,         String, :key => true, :index => true
     
     has n, :peptides
 end

@@ -1,5 +1,5 @@
-def get_create_psm(peptide_db, dataset_db, tab_file, scan_number, filename)
-    join_dataset_peptide = DatasetPeptide.first(:dataset => dataset_db, :peptide => peptide_db)    
+def get_create_psm(peptide_db, dataset_db, join_dataset_peptide, tab_file, scan_number, filename)
+    #join_dataset_peptide = DatasetPeptide.first(:dataset => dataset_db, :peptide => peptide_db)    
     psm = Datasetpeptidespectrummatch.create(:filename => filename, :scan => scan_number, :tabfile => tab_file, :DatasetPeptide => join_dataset_peptide)
 
 end

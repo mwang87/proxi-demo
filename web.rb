@@ -25,7 +25,8 @@ end
 
 get '/peptide/all' do
     #@all_peptides = Basicpeptide.all
-    @all_peptides = Peptide.all
+    page_number = 1
+    @all_peptides = Peptide.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
     haml :peptide_all
 end
 

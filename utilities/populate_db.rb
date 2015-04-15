@@ -103,6 +103,7 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     tab_data = JSON.parse(http_get(tab_information_url))["blockData"]
     
     psm_count = 0
+    dataset_db = get_create_dataset(dataset_id)
     
     tab_data.each{ |psm_object|
         psm_count += 1
@@ -114,12 +115,12 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     
         peptide_db = get_create_peptide(peptide)
         #puts peptide_db
-        dataset_db = get_create_dataset(dataset_id)
+        
         #puts dataset_db
         
         join_db = create_dataset_peptide_link(peptide_db, dataset_db)
     
-        get_create_psm(peptide_db, dataset_db, tsv_id, scan, spectrum_file)
+        get_create_psm(peptide_db, dataset_db, join_db, tsv_id, scan, spectrum_file)
     }
 end
 
