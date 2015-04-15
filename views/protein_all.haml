@@ -1,2 +1,15 @@
-- @all_proteins.each do |protein|
-    %a{:href=>"/protein/query/#{protein.name}"} #{protein.name}
+- if @next_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@next_page}"} Next Page
+- if @previous_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}"} Prev Page
+
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th Protein Name
+    - @proteins.each do |protein|
+        %tr
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{protein.id}/dataset/list}"} View Datasets
+            %td{:style=>"vertical-align:middle"}= protein.name

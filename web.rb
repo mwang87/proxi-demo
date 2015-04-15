@@ -17,6 +17,8 @@ require './controllers/dataset_controller'
 require './controllers/variant_controller'
 require './controllers/protein_controller'
 require './utils/utils'
+require './utils/protein_utils'
+require './utils/peptide_utils'
 
 get '/' do
     haml :homepage
