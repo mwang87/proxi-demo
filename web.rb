@@ -12,64 +12,29 @@ require 'redis'
 require 'haml'
 require './settings'
 require './models'
-require './controller_peptide'
-
+require './controllers/peptide_controller'
+require './controllers/dataset_controller'
+require './controllers/variant_controller'
+require './controllers/protein_controller'
 
 get '/' do
-    "PROXI Demo"
+    haml :homepage
 end
 
-get '/peptide/all.json' do
-    return Basicpeptide.all.to_json
-end
 
-get '/peptide/all' do
+
+get '/peptide/list.json' do
     #@all_peptides = Basicpeptide.all
     page_number = 1
     if params[:page] != nil
         page_number = params[:page].to_i
     end
 
-    #Determining next and prev page
-    if page_number == 1
-        @next_page = page_number + 1
-        @previous_page = nil
-    else
-        @next_page = page_number + 1
-        @previous_page = page_number - 1
-    end
+    results = Basicpeptide.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
 
-
-    @all_peptides = Peptide.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
-    haml :peptide_all
+    return results.to_json
 end
 
-get '/peptide/:peptide' do
-    query_peptide = params[:peptide]
-    peptide_object = Peptide.first(:sequence => query_peptide)
-    
-    if peptide_object == nil
-        return "{}"
-    end
-    
-    @datasets = peptide_object.datasets
-    @peptide = query_peptide
-    haml :peptide_datasets
-    #return peptide_object.datasets.to_json()
-    
-    #return peptide_object.peptides.datasets.to_json()
-end
-
-get '/peptide/:peptide/dataset/:dataset' do
-    peptide_db = Peptide.first(:sequence => params[:peptide])
-    dataset_db = Dataset.first(:name => params[:dataset])
-    
-    join_dataset_peptide = DatasetPeptide.first(:dataset => dataset_db, :peptide => peptide_db)
-    
-    psms = Datasetpeptidespectrummatch.all(:DatasetPeptide => join_dataset_peptide)
-
-    psms.to_json()
-end
 
 
 

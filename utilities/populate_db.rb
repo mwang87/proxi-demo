@@ -3,7 +3,7 @@
 require 'json'
 require '../settings'
 require '../models'
-require '../controller_peptide'
+require '../controllers/peptide_controller'
 require 'net/http'
 
 
@@ -108,17 +108,16 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     tab_data.each{ |psm_object|
         psm_count += 1
         puts psm_count.to_s + " of " + tab_data.length.to_s
-	spectrum_file = psm_object["#SpecFile"]
-	scan =  psm_object["nativeID_scan"]
+        spectrum_file = psm_object["#SpecFile"]
+        scan =  psm_object["nativeID_scan"]
         peptide = psm_object["modified_sequence"]
 	
-    
-        peptide_db = get_create_peptide(peptide)
+        peptide_db, basicpeptide_db = get_create_peptide(peptide)
         #puts peptide_db
         
         #puts dataset_db
         
-        join_db = create_dataset_peptide_link(peptide_db, dataset_db)
+        join_db = create_dataset_peptide_link(peptide_db, basicpeptide_db, dataset_db)
     
         get_create_psm(peptide_db, dataset_db, join_db, tsv_id, scan, spectrum_file)
     }

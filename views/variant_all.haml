@@ -1,0 +1,21 @@
+- if @next_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@next_page}"} Next Page
+- if @previous_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}"} Prev Page
+
+
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th
+            %th Sequence
+            %th Dataset Counts
+    - @variants.each do |variant|
+        %tr
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/peptide/#{variant.basicpeptide.sequence}"} View Peptide
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/variant/#{variant.sequence}/dataset/list"} View Datasets
+            %td{:style=>"vertical-align:middle"}= variant.sequence
+            %td{:style=>"vertical-align:middle"}= variant.datasets.length

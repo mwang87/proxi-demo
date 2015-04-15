@@ -29,6 +29,7 @@ class Basicpeptide
     property :sequence,         String, :key => true, :index => true
     
     has n, :peptides
+    has n, :datasets, :through => :BasicPeptideDataset
 end
 
 class DatasetPeptide
@@ -39,6 +40,14 @@ class DatasetPeptide
     belongs_to :peptide
     belongs_to :dataset
     
+end
+
+class BasicpeptideDataset
+    include DataMapper::Resource
+    property :id,               Serial
+    
+    belongs_to :basicpeptide
+    belongs_to :dataset
 end
 
 class DatasetProtein
@@ -54,6 +63,7 @@ class Dataset
     property :id,               Serial
     property :name,             String
     
+    has n, :basicpeptides, :through => :datasetbasicpeptide
     has n, :peptides, :through => :datasetpeptide
     has n, :proteins, :through => :datasetprotein
 end

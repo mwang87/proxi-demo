@@ -1,0 +1,13 @@
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th
+            %th Dataset Name
+    - @datasets.each do |dataset|
+        %tr
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/dataset/#{dataset.id}/protein/list"} View Proteins
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/dataset/#{dataset.id}/peptide/list"} View Peptides
+            %td{:style=>"vertical-align:middle"}= dataset.name
