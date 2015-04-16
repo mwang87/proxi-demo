@@ -7,9 +7,11 @@
     %thead
         %tr
             %th
-            %th Dataset Name
-    - @datasets.each do |dataset|
+            %th filename
+            %th scan
+    - @psms.each do |psm|
         %tr
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{@protein_id}/dataset/#{dataset.id}/peptide/list"} View Peptides
-            %td{:style=>"vertical-align:middle"}= dataset.name
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/psm/#{psm.id}"} View PSM
+            %td{:style=>"vertical-align:middle"}= psm.filename
+            %td{:style=>"vertical-align:middle"}= psm.scan

@@ -11,5 +11,5 @@
     - @datasets.each do |dataset|
         %tr
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{@protein_id}/dataset/#{dataset.id}/peptide/list"} View Peptides
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/variant/#{@peptide}/dataset/#{dataset.id}/psm/list"} View PSMs
             %td{:style=>"vertical-align:middle"}= dataset.name

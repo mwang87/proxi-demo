@@ -25,5 +25,19 @@ get '/variant/:variant/dataset/list' do
     
     @datasets = peptide_object.datasets
     @peptide = variant_seq
-    haml :dataset_all
+    haml :variant_datasets
+end
+
+
+get '/variant/:variant/dataset/:dataset/psm/list' do
+	variant_db = Peptide.first(:sequence => params[:variant])
+	dataset_db = Dataset.first(:id => params[:dataset])
+
+	#variant_dataset_db = DatasetPeptide.first(:peptide => variant_db, :dataset => dataset_db)
+
+	#psms = 
+
+	@psms = Datasetpeptidespectrummatch.all(:DatasetPeptide => {:peptide => variant_db, :dataset => dataset_db})
+
+	haml :psms_all
 end
