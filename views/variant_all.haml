@@ -17,5 +17,7 @@
                 %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/peptide/#{variant.basicpeptide.sequence}"} View Peptide
             %td
                 %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/variant/#{variant.sequence}/dataset/list"} View Datasets
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/variant/#{variant.sequence}/psms/list"} View PSMs
             %td{:style=>"vertical-align:middle"}= variant.sequence
             %td{:style=>"vertical-align:middle"}= variant.datasets.length

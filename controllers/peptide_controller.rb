@@ -64,7 +64,10 @@ get '/peptide/:peptide/dataset/:dataset/variants/list' do
     
     join_dataset_peptide = BasicpeptideDataset.first(:dataset => dataset_db, :basicpeptide => peptide_db)
     
-    #psms = Datasetpeptidespectrummatch.all(:DatasetPeptide => join_dataset_peptide)
+    #@variants = Peptide.all(:basicpeptide => {:sequence => params[:peptide]}, :datasets => {:id => params[:dataset]})
+    #@variants = Datasetpeptidespectrummatch.all(:DatasetPeptide => join_dataset_peptide)
+    haml :variant_all
+    #
 
     #psms.to_json()
 end
