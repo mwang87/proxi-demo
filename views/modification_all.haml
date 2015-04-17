@@ -3,11 +3,13 @@
 - if @previous_page != nil
     %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}"} Prev Page
 
-
 %table.table.table-striped.table-condensed.tablesorter
     %thead
         %tr
-            %th Sequence
-    - @all_peptides.each do |peptide|
+            %th
+            %th Mod Name Name
+    - @all_modifications.each do |modification|
         %tr
-            %td{:style=>"vertical-align:middle"}= peptide.sequence
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/#{modification.id}/peptide/list"} View Peptides
+            %td{:style=>"vertical-align:middle"}= modification.name
