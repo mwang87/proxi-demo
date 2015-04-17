@@ -7,22 +7,14 @@ def get_create_psm(peptide_db, dataset_db, join_dataset_peptide, tab_file, scan_
 end
 
 
-def get_create_peptide(peptide_sequence)
-    peptide_object = Peptide.first_or_create(:sequence => peptide_sequence)
+def get_create_peptide(peptide_sequence, modifications)
+    stripped_sequence = peptide_sequence.gsub(/\W+/, '').gsub(/\d\s?/, '')    
+    peptide_object = Peptide.first_or_create(:sequence => stripped_sequence)
+    variant_object = Variant.first_or_create(:sequence => peptide_sequence, :peptide => peptide_object)
     
-    #stripping out PTMs from peptide object
-    stripped_sequence = peptide_sequence.gsub(/\W+/, '').gsub(/\d\s?/, '')
-    #puts peptide_sequence
-    #puts "STRIPPED: " + stripped_sequence
-    basic_peptide_object = Basicpeptide.first_or_create(:sequence => stripped_sequence)
-    basic_peptide_object.save
-    
-    peptide_object.basicpeptide = basic_peptide_object
-    #puts peptide_object.sequence
-    if peptide_object.save
-        #puts "SAVED"
-    end
-    return peptide_object, basic_peptide_object
+    #Adding Modifications
+
+    return peptide_object, variant_object
 end
 
 def get_create_dataset(dataset_name)

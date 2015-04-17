@@ -7,6 +7,7 @@ require '../models'
 require '../utils/utils'
 require '../utils/protein_utils'
 require '../utils/peptide_utils'
+require '../utils/modification_utils'
 
 require 'net/http'
 
@@ -56,14 +57,21 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
         scan =  psm_object["nativeID_scan"]
         peptide = psm_object["modified_sequence"]
         protein = psm_object["accession"]
+        modification_string = psm_object["modifications"]
+
+        modifications_list = Array.new
+        if modification_string != "null" do
+            modifications_list = modification_string.split(',')
+        end
+
 	
-        peptide_db, basicpeptide_db = get_create_peptide(peptide)
-        join_db = create_dataset_peptide_link(peptide_db, basicpeptide_db, dataset_db)
-        get_create_psm(peptide_db, dataset_db, join_db, tsv_id, scan, spectrum_file)
+        variant_db, peptide_db = get_create_peptide(peptide, modifications_list)
+        #join_db = create_dataset_peptide_link(peptide_db, basicpeptide_db, dataset_db)
+        #get_create_psm(peptide_db, dataset_db, join_db, tsv_id, scan, spectrum_file)
 
         #Adding Proteins
-        protein_db = get_create_protein(protein)
-        protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
+        #protein_db = get_create_protein(protein)
+        #protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
     }
 end
 

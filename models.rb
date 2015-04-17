@@ -4,6 +4,23 @@ require 'dm-constraints'
 
 DataMapper::Property::String.length(255)
 
+class Modification
+    include DataMapper::Resource
+    property :id,               Serial
+    property :name,             String
+    
+    has n, :variant, :through => :ModificationVariant
+end
+
+class ModificationVariant
+    include DataMapper::Resource
+    property :id,               Serial
+    property :location,         Integer
+
+    belongs_to :modification
+    belongs_to :variant
+end
+
 class Datasetpeptidespectrummatch
     include DataMapper::Resource
     property :id,               Serial
@@ -11,7 +28,16 @@ class Datasetpeptidespectrummatch
     property :scan,             String
     property :tabfile,          String
     
-    belongs_to :DatasetPeptide
+    belongs_to :DatasetVariant
+end
+
+class Variant
+    include DataMapper::Resource
+    property :id,               Serial
+    property :sequence,         String
+    
+    has n, :datasets, :through => :datasetvariant
+    belongs_to :peptide
 end
 
 class Peptide
@@ -19,30 +45,21 @@ class Peptide
     property :id,               Serial
     property :sequence,         String, :key => true, :index => true
     
-    has n, :datasets, :through => :datasetpeptide
-    belongs_to :basicpeptide
-end
-
-class Basicpeptide
-    include DataMapper::Resource
-    property :id,               Serial
-    property :sequence,         String, :key => true, :index => true
-    
     has n, :peptides
-    has n, :datasets, :through => :BasicPeptideDataset
+    has n, :datasets, :through => :datasetpeptide
 end
 
-class DatasetPeptide
+class DatasetVariant
     include DataMapper::Resource
     property :id,               Serial
     
     #has n, :datasetpeptidespectrummatch
-    belongs_to :peptide
+    belongs_to :variant
     belongs_to :dataset
     
 end
 
-class BasicpeptideDataset
+class DatasetPeptide
     include DataMapper::Resource
     property :id,               Serial
     
@@ -63,8 +80,8 @@ class Dataset
     property :id,               Serial
     property :name,             String
     
-    has n, :basicpeptides, :through => :datasetbasicpeptide
-    has n, :peptides, :through => :datasetpeptide
+    has n, :peptide, :through => :PeptideDataset
+    has n, :variant, :through => :datasetvariant
     has n, :proteins, :through => :datasetprotein
 end
 
