@@ -21,7 +21,7 @@ class ModificationVariant
     belongs_to :variant
 end
 
-class Datasetpeptidespectrummatch
+class Datasetvariantspectrummatch
     include DataMapper::Resource
     property :id,               Serial
     property :filename,         String
@@ -103,6 +103,6 @@ Modification.auto_migrate! unless Modification.storage_exists?
 ModificationVariant.auto_migrate! unless ModificationVariant.storage_exists?
 DatasetVariant.auto_migrate! unless DatasetVariant.storage_exists?
 DatasetProtein.auto_migrate! unless DatasetProtein.storage_exists?
-Datasetpeptidespectrummatch.auto_migrate! unless Datasetpeptidespectrummatch.storage_exists?
+Datasetvariantspectrummatch.auto_migrate! unless Datasetvariantspectrummatch.storage_exists?
 DataMapper.auto_upgrade!
 

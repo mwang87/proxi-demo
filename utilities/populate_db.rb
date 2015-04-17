@@ -66,12 +66,12 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
 
 	
         variant_db, peptide_db = get_create_peptide(peptide, modifications_list)
-        #join_db = create_dataset_peptide_link(peptide_db, basicpeptide_db, dataset_db)
-        #get_create_psm(peptide_db, dataset_db, join_db, tsv_id, scan, spectrum_file)
+        datset_peptide_db, dataset_variant_db = create_dataset_peptide_link(variant_db, peptide_db, dataset_db)
+        get_create_psm(variant_db, dataset_db, dataset_variant_db, tsv_id, scan, spectrum_file)
 
         #Adding Proteins
-        #protein_db = get_create_protein(protein)
-        #protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
+        protein_db = get_create_protein(protein)
+        protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
     }
 end
 

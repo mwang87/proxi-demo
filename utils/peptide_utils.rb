@@ -1,8 +1,7 @@
 
 
-def get_create_psm(peptide_db, dataset_db, join_dataset_peptide, tab_file, scan_number, filename)
-    #join_dataset_peptide = DatasetPeptide.first(:dataset => dataset_db, :peptide => peptide_db)    
-    psm = Datasetpeptidespectrummatch.create(:filename => filename, :scan => scan_number, :tabfile => tab_file, :DatasetPeptide => join_dataset_peptide)
+def get_create_psm(variant_db, dataset_db, join_dataset_variant, tab_file, scan_number, filename)   
+    psm = Datasetvariantspectrummatch.create(:filename => filename, :scan => scan_number, :tabfile => tab_file, :DatasetVariant => join_dataset_variant)
 
 end
 
@@ -33,9 +32,8 @@ def get_create_dataset(dataset_name)
     return dataset_object
 end
 
-def create_dataset_peptide_link(peptide_sequence_db, basicpeptide_db, dataset_name_db)
-    BasicpeptideDataset.first_or_create(:basicpeptide => basicpeptide_db, :dataset => dataset_name_db)
-    join_object = DatasetPeptide.first_or_create(:peptide => peptide_sequence_db, :dataset => dataset_name_db)
-    join_object.save
-    return join_object
+def create_dataset_peptide_link(variant_db, peptide_db, dataset_db)
+    datset_peptide_db = DatasetPeptide.first_or_create(:peptide => peptide_db, :dataset => dataset_db)
+    dataset_variant_db = DatasetVariant.first_or_create(:variant => variant_db, :dataset => dataset_db)
+    return datset_peptide_db, dataset_variant_db
 end
