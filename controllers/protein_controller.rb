@@ -27,12 +27,4 @@ get '/protein/:protein/dataset/:dataset/peptide/list' do
 
 end
 
-get '/protein/:protein/peptide/list' do
-	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-	protein_db = Protein.first(:id => params[:protein])
-
-	#protein_db
-	return "WORK IN PROGRESS, UPDATE SCHEMA"
-end
 

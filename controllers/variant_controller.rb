@@ -41,3 +41,29 @@ get '/variant/:variant/dataset/:dataset/psm/list' do
 
 	haml :psms_all
 end
+
+#List all the variants of a given peptide
+get '/peptide/:peptide/variant/list' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    basic_peptide = Basicpeptide.first(:sequence => params[:peptide])
+    @variants = basic_peptide.peptides(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
+
+    haml :variant_all
+end
+
+
+#For each basic peptide, and dataset, list all the variants
+get '/peptide/:peptide/dataset/:dataset/variants/list' do
+    peptide_db = Basicpeptide.first(:sequence => params[:peptide])
+    dataset_db = Dataset.first(:name => params[:dataset])
+    
+    join_dataset_peptide = BasicpeptideDataset.first(:dataset => dataset_db, :basicpeptide => peptide_db)
+    
+    #@variants = Peptide.all(:basicpeptide => {:sequence => params[:peptide]}, :datasets => {:id => params[:dataset]})
+    #@variants = Datasetpeptidespectrummatch.all(:DatasetPeptide => join_dataset_peptide)
+    haml :variant_all
+    #
+
+    #psms.to_json()
+end

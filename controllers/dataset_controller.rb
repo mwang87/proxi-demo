@@ -25,3 +25,18 @@ get '/dataset/:datasetid/protein/list' do
 	haml :dataset_proteins
 
 end
+
+
+#List all the basic peptides in a dataset
+get '/peptide/:peptide/dataset/list' do
+    query_peptide = params[:peptide]
+    peptide_object = Basicpeptide.first(:sequence => query_peptide)
+    
+    if peptide_object == nil
+        return "{}"
+    end
+    
+    @datasets = peptide_object.datasets
+    @peptide = query_peptide
+    haml :peptide_datasets
+end

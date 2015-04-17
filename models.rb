@@ -9,7 +9,7 @@ class Modification
     property :id,               Serial
     property :name,             String
     
-    has n, :variant, :through => :ModificationVariant
+    has n, :variants, :through => :ModificationVariant
 end
 
 class ModificationVariant
@@ -37,6 +37,7 @@ class Variant
     property :sequence,         String
     
     has n, :datasets, :through => :datasetvariant
+    has n, :modifications, :through => :modificationvariant
     belongs_to :peptide
 end
 
