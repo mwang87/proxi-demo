@@ -1,3 +1,23 @@
+
+#Given a mod, give me the datasets that have supporting information
+get '/modification/:mod/dataset/list' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    mod_db = Modification.first(:id => params[:mod])
+
+    #fix this
+    @datasets =  Dataset.all(:variants => mod_db.variants)
+
+    puts mod_db.variants
+    puts @datasets
+
+    haml :dataset_plain_display
+end
+
+
+
+###OLD APIS
+
 get '/dataset/list' do
 	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
 

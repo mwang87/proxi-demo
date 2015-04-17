@@ -82,7 +82,7 @@ class Dataset
     property :name,             String
     
     has n, :peptide, :through => :PeptideDataset
-    has n, :variant, :through => :datasetvariant
+    has n, :variants, :through => :datasetvariant
     has n, :proteins, :through => :datasetprotein
 end
 

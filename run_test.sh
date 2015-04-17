@@ -1,2 +1,2 @@
 export RACK_ENV=test
-rackup -p 3000
+rackup -p 3001

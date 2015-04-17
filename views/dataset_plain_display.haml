@@ -1,0 +1,9 @@
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th
+            %th Dataset Name
+    - @datasets.each do |dataset|
+        %tr
+            %td{:style=>"vertical-align:middle"}= dataset.name

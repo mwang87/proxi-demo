@@ -11,5 +11,10 @@
     - @all_modifications.each do |modification|
         %tr
             %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/#{modification.id}/dataset/list"} View Datasets
+            %td
                 %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/#{modification.id}/peptide/list"} View Peptides
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/#{modification.id}/psm/list"} View PSMs
             %td{:style=>"vertical-align:middle"}= modification.name
+
