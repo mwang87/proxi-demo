@@ -5,11 +5,9 @@ get '/modification/:mod/dataset/list' do
 
     mod_db = Modification.first(:id => params[:mod])
 
-    #fix this
-    @datasets =  Dataset.all(:variants => mod_db.variants)
+    dataset_variants = DatasetVariant.all(:variant => mod_db.variants)
 
-    puts mod_db.variants
-    puts @datasets
+    @datasets =  dataset_variants.datasets
 
     haml :dataset_plain_display
 end

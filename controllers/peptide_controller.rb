@@ -25,17 +25,10 @@ get '/modification/:mod/peptide/list' do
 
     mod_db = Modification.first(:id => params[:mod])
 
-    @all_peptides =  Peptide.all(:variants => mod_db.variants)
+    @all_peptides =  Peptide.all(:variants => mod_db.variants, :offset => (page_number - 1) * PAGINATION_SIZE, :limit => PAGINATION_SIZE)
 
     haml :peptide_all
 end
-
-
-
-
-
-
-
 
 get '/protein/:protein/peptide/list' do
     page_number, @previous_page, @next_page = page_prev_next_utilties(params)
