@@ -17,9 +17,12 @@ get '/peptide/list' do
     end
 
 
-    @all_peptides = Basicpeptide.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
+    @all_peptides = Peptide.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
+
     haml :peptide_all
 end
+
+
 
 #List all the variants of a given peptide
 get '/peptide/:peptide/variant/list' do

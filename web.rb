@@ -16,6 +16,7 @@ require './controllers/peptide_controller'
 require './controllers/dataset_controller'
 require './controllers/variant_controller'
 require './controllers/protein_controller'
+require './controllers/modification_controller'
 require './controllers/psm_controller'
 require './utils/utils'
 require './utils/protein_utils'
@@ -27,17 +28,7 @@ end
 
 
 
-get '/peptide/list.json' do
-    #@all_peptides = Basicpeptide.all
-    page_number = 1
-    if params[:page] != nil
-        page_number = params[:page].to_i
-    end
 
-    results = Basicpeptide.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
-
-    return results.to_json
-end
 
 
 

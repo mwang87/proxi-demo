@@ -75,9 +75,5 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     }
 end
 
-
-#create_library_db_name(ARGV[1])
-#parse_mgf_library(ARGV[0], ARGV[1])
-
 import_results_dataset(ARGV[0])
 
