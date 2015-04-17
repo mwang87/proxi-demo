@@ -28,3 +28,19 @@ get '/peptide/:peptide/psm/list' do
 
     haml :psms_all
 end
+
+
+get '/protein/:protein/psm/list' do
+	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+	protein_db = Protein.first(:id => params[:protein])
+
+	@psms = Datasetvariantspectrummatch.all(
+		:DatasetProtein => DatasetProtein.all(:protein => protein_db), 
+		:offset => (page_number - 1) * PAGINATION_SIZE, 
+		:limit => PAGINATION_SIZE)	
+
+    haml :psms_all
+end
+
+

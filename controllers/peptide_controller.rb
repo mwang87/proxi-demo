@@ -35,7 +35,12 @@ get '/protein/:protein/peptide/list' do
 
     protein_db = Protein.first(:id => params[:protein])
 
-    #protein_db
-    return "WORK IN PROGRESS, UPDATE SCHEMA"
-end
+    psms = Datasetvariantspectrummatch.all(
+        :DatasetProtein => DatasetProtein.all(:protein => protein_db), 
+        :offset => (page_number - 1) * PAGINATION_SIZE, 
+        :limit => PAGINATION_SIZE)  
 
+    @all_peptides = psms.DatasetVariant.variant.peptide
+
+    haml :peptide_all
+end

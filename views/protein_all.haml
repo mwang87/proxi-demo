@@ -12,4 +12,8 @@
         %tr
             %td
                 %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{protein.id}/dataset/list"} View Datasets
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{protein.id}/peptide/list"} View Peptides
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{protein.id}/psm/list"} View PSMs
             %td{:style=>"vertical-align:middle"}= protein.name
