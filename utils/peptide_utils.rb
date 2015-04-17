@@ -1,7 +1,12 @@
 
 
-def get_create_psm(variant_db, dataset_db, join_dataset_variant, tab_file, scan_number, filename)   
-    psm = Datasetvariantspectrummatch.create(:filename => filename, :scan => scan_number, :tabfile => tab_file, :DatasetVariant => join_dataset_variant)
+def get_create_psm(variant_db, dataset_db, join_dataset_variant, protein_dataset_join, tab_file, scan_number, filename)   
+    psm = Datasetvariantspectrummatch.create(
+        :filename => filename, 
+        :scan => scan_number, 
+        :tabfile => tab_file, 
+        :DatasetVariant => join_dataset_variant,
+        :DatasetProtein => protein_dataset_join)
 
 end
 

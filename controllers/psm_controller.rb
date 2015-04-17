@@ -15,3 +15,16 @@ get '/modification/:mod/psm/list' do
     haml :psms_all
 
 end
+
+get '/peptide/:peptide/psm/list' do
+	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+	peptide_db = Peptide.first(:sequence => params[:peptide])
+
+	@psms = Datasetvariantspectrummatch.all(
+		:DatasetVariant => DatasetVariant.all(:variant => peptide_db.variants), 
+		:offset => (page_number - 1) * PAGINATION_SIZE, 
+		:limit => PAGINATION_SIZE)	
+
+    haml :psms_all
+end

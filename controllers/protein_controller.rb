@@ -5,8 +5,6 @@ get '/protein/list' do
 
     @all_proteins = Protein.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
     
-    #return "MING"
-
     haml :protein_all
 end
 

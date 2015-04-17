@@ -29,6 +29,7 @@ class Datasetvariantspectrummatch
     property :tabfile,          String
     
     belongs_to :DatasetVariant
+    belongs_to :DatasetProtein
 end
 
 class Variant
@@ -57,7 +58,6 @@ class DatasetVariant
     #has n, :datasetpeptidespectrummatch
     belongs_to :variant
     belongs_to :dataset
-    
 end
 
 class DatasetPeptide
