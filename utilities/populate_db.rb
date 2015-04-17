@@ -60,7 +60,7 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
         modification_string = psm_object["modifications"]
 
         modifications_list = Array.new
-        if modification_string != "null" do
+        if modification_string != "null"
             modifications_list = modification_string.split(',')
         end
 

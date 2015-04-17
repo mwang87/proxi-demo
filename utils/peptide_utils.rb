@@ -10,9 +10,19 @@ end
 def get_create_peptide(peptide_sequence, modifications)
     stripped_sequence = peptide_sequence.gsub(/\W+/, '').gsub(/\d\s?/, '')    
     peptide_object = Peptide.first_or_create(:sequence => stripped_sequence)
+    peptide_object.save
     variant_object = Variant.first_or_create(:sequence => peptide_sequence, :peptide => peptide_object)
-    
+
     #Adding Modifications
+    modifications.each { |modification|
+        modification_split = modification.split("-")
+        mod_name = modification_split[1]
+        mod_location = modification_split[0]
+        modification_db = Modification.first_or_create(:name => mod_name)
+
+        #Creating connection
+        mod_variant_db = ModificationVariant.first_or_create(:modification => modification_db, :variant => variant_object, :location => mod_location)
+    }
 
     return peptide_object, variant_object
 end

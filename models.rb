@@ -45,7 +45,7 @@ class Peptide
     property :id,               Serial
     property :sequence,         String, :key => true, :index => true
     
-    has n, :peptides
+    has n, :variants
     has n, :datasets, :through => :datasetpeptide
 end
 
@@ -63,7 +63,7 @@ class DatasetPeptide
     include DataMapper::Resource
     property :id,               Serial
     
-    belongs_to :basicpeptide
+    belongs_to :peptide
     belongs_to :dataset
 end
 
@@ -96,9 +96,12 @@ end
 
 DataMapper.finalize
 Peptide.auto_migrate! unless Peptide.storage_exists?
+Variant.auto_migrate! unless Variant.storage_exists?
 Dataset.auto_migrate! unless Dataset.storage_exists?
-Protein.auto_migrate! unless Protein    .storage_exists?
-DatasetPeptide.auto_migrate! unless DatasetPeptide.storage_exists?
+Protein.auto_migrate! unless Protein.storage_exists?
+Modification.auto_migrate! unless Modification.storage_exists?
+ModificationVariant.auto_migrate! unless ModificationVariant.storage_exists?
+DatasetVariant.auto_migrate! unless DatasetVariant.storage_exists?
 DatasetProtein.auto_migrate! unless DatasetProtein.storage_exists?
 Datasetpeptidespectrummatch.auto_migrate! unless Datasetpeptidespectrummatch.storage_exists?
 DataMapper.auto_upgrade!
