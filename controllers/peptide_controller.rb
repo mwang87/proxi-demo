@@ -74,7 +74,6 @@ get '/peptide/aggregateview' do
     mod_db = nil
 
     variants_protein_db = nil
-    variants_mod_db = nil
 
     if protein.length > 2
         filter_protein = true
@@ -92,12 +91,11 @@ get '/peptide/aggregateview' do
     if modification.length > 2
         filter_mod = true
         mod_db = Modification.first(:name => modification)
-        variants_mod_db = mod_db.variants
     end
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
-        @all_peptides = peptides_db.all(:variants => variants_protein_db & variants_mod_db)
+        @all_peptides = peptides_db.all(:variants => variants_protein_db) & mod_db.peptides
         return haml :peptide_all
     end
 
@@ -107,12 +105,12 @@ get '/peptide/aggregateview' do
     end
 
     if filter_peptide and filter_mod
-        @all_peptides = peptides_db.all(:variants => variants_mod_db)
+        @all_peptides = peptides_db & mod_db.peptides
         return haml :peptide_all
     end
 
     if filter_protein and filter_mod
-        @all_peptides = Peptide.all(:variants => variants_protein_db & variants_mod_db)
+        @all_peptides = Peptide.all(:variants => variants_protein_db) & mod_db.peptides
         return haml :peptide_all
     end
 
@@ -127,19 +125,6 @@ get '/peptide/aggregateview' do
     end
 
     if filter_mod
-        #adapter = DataMapper.repository(:default).adapter
-        #peptide_query = "SELECT * FROM peptides "
-        #peptide_query += "JOIN "
-
-        #SELECT * FROM peptides 
-        #JOIN variants ON variants.peptide_id=peptides.id
-        #JOIN modification_variants ON variants.id=modification_variants.variant_id
-        #JOIN modifications ON id=modification_variants.modification_id=modifications.id;
-        #WHERE modifications.id=1
-
-        #@all_peptides = Peptide.all(:variants => variants_mod_db)
-        #puts "variants size: " + mod_db.variants.length.to_s
-        #@all_peptides = Peptide.all(:variants => mod_db.variants)
         @all_peptides = mod_db.peptides
         return haml :peptide_all
     end
