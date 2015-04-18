@@ -31,7 +31,7 @@ get '/protein/aggregateview' do
         filter_protein = true
     end
 
-    if peptide.length > 1
+    if peptide.length > 2
         filter_peptide = true
     end
 

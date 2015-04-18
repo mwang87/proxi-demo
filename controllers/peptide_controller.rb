@@ -83,7 +83,7 @@ get '/peptide/aggregateview' do
         variants_protein_db = psms.DatasetVariant.variant
     end
 
-    if peptide.length > 1
+    if peptide.length > 2
         filter_peptide = true
         query_peptide = "%" + peptide + "%"
         peptides_db = Peptide.all(:sequence.like => query_peptide)

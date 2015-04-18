@@ -1,3 +1,14 @@
+### ZERO CONDITIONS
+
+
+get '/dataset/list' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    @datasets = Dataset.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
+
+    haml :dataset_all
+end
+
 ### SINGLE CONDITIONS
 
 #Given a mod, give me the datasets that have supporting information
@@ -82,11 +93,11 @@ get '/dataset/aggregateview' do
     peptide_db = nil
     protein_db = nil
     mod_db = nil
-    dataset_variants_db = nil
+    dataset_variants_mod_db = nil
     dataset_peptide_db = nil
     dataset_protein_db = nil
 
-    if protein.length > 2 
+    if protein.length > 2
         filter_protein = true
         protein_db = Protein.first(:name => protein)
         dataset_protein_db = protein_db.DatasetProtein
@@ -102,20 +113,63 @@ get '/dataset/aggregateview' do
     if modification.length > 2
         filter_mod = true
         mod_db = Modification.first(:name => modification)
-        dataset_variants_db = DatasetVariant.all(:variant => mod_db.variants)
+        dataset_variants_mod_db = DatasetVariant.all(:variant => mod_db.variants)
     end
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
         @datasets = Dataset.all(
             :DatasetPeptide => dataset_peptide_db, 
-            :DatasetVariant => dataset_variants_db, 
+            :DatasetVariant => dataset_variants_mod_db, 
             :DatasetProtein => dataset_protein_db)
 
         return haml :dataset_plain_display
     end
 
-    #TODO SUPPORT THE OTHER 6 options
+    if filter_peptide and filter_mod
+        @datasets = Dataset.all(
+            :DatasetPeptide => dataset_peptide_db, 
+            :DatasetVariant => dataset_variants_mod_db)
+
+        return haml :dataset_plain_display
+    end
+
+    if filter_protein and filter_mod
+        @datasets = Dataset.all(
+            :DatasetVariant => dataset_variants_mod_db, 
+            :DatasetProtein => dataset_protein_db)
+
+        return haml :dataset_plain_display
+    end
+
+    if filter_protein and filter_peptide
+        @datasets = Dataset.all(
+            :DatasetPeptide => dataset_peptide_db,
+            :DatasetProtein => dataset_protein_db)
+
+        return haml :dataset_plain_display
+    end
+
+    if filter_protein
+        @datasets = Dataset.all(
+            :DatasetProtein => dataset_protein_db)
+
+        return haml :dataset_plain_display
+    end
+
+    if filter_peptide
+        @datasets = Dataset.all(
+            :DatasetPeptide => dataset_peptide_db)
+
+        return haml :dataset_plain_display
+    end
+
+    if filter_mod
+        @datasets = Dataset.all(
+            :DatasetVariant => dataset_variants_mod_db)
+
+        return haml :dataset_plain_display
+    end
 
     return "MING"
 end
@@ -126,13 +180,6 @@ end
 
 ###OLD APIS
 
-get '/dataset/list' do
-	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-    @datasets = Dataset.all(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
-
-    haml :dataset_all
-end
 
 
 get '/dataset/:datasetid/peptide/list' do

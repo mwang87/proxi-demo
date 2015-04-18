@@ -76,7 +76,7 @@ get '/psms/aggregateview' do
         datasetprotein_protein_db = DatasetProtein.all(:protein => protein_db)
     end
 
-    if peptide.length > 1
+    if peptide.length > 2
         filter_peptide = true
         query_peptide = "%" + peptide + "%"
         peptides_db = Peptide.all(:sequence.like => query_peptide)
@@ -151,6 +151,5 @@ get '/psms/aggregateview' do
         return haml :psms_all
     end
 
-    return "MING"
 end
 
