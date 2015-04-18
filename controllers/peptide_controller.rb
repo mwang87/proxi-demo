@@ -1,3 +1,5 @@
+#Zero Conditions
+
 
 #List all the basic peptides
 get '/peptide/list' do
@@ -7,6 +9,8 @@ get '/peptide/list' do
 
     haml :peptide_all
 end
+
+#Single Conditions
 
 #Gets all the peptides per dataset
 get '/dataset/:dataset/peptide/list' do
@@ -44,3 +48,6 @@ get '/protein/:protein/peptide/list' do
 
     haml :peptide_all
 end
+
+
+#Double Conditions

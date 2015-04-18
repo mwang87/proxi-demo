@@ -1,4 +1,4 @@
-
+#Zero Conditions
 
 get '/protein/list' do
 	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
@@ -7,6 +7,8 @@ get '/protein/list' do
     
     haml :protein_all
 end
+
+#Single Conditions
 
 get '/protein/:protein/dataset/list' do
 	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
@@ -20,9 +22,5 @@ get '/protein/:protein/dataset/list' do
 	haml :protein_datasets
 end
 
-#Probaby Not Supported
-get '/protein/:protein/dataset/:dataset/peptide/list' do
 
-end
-
-
+#Double Conditions

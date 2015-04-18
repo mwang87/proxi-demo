@@ -1,3 +1,4 @@
+### SINGLE CONDITIONS
 
 #Given a mod, give me the datasets that have supporting information
 get '/modification/:mod/dataset/list' do
@@ -11,6 +12,51 @@ get '/modification/:mod/dataset/list' do
 
     haml :dataset_plain_display
 end
+
+#Given a peptide, give me the datasets that have supporting information
+get '/peptide/:peptide/dataset/list' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    peptide_db = Peptide.first(:sequence => params[:peptide])
+
+    @datasets =  peptide_db.datasets
+
+    haml :dataset_plain_display
+end
+
+#DOUBLE CONDITIONS
+
+#Get Datasets that have peptide on this protein
+get '/protein/:protein/peptide/:peptide/dataset/list' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    peptide_db = Peptide.first(:sequence => params[:peptide])
+    protein_db = Protein.first(:id => params[:protein])
+
+    @datasets = peptide_db.datasets & protein_db.datasets
+
+    haml :dataset_plain_display
+end
+
+
+get '/peptide/:peptide/modification/:mod/dataset/list' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    peptide_db = Peptide.first(:sequence => params[:peptide])
+    mod_db = Modification.first(:id => params[:mod])
+
+    dataset_variants = DatasetVariant.all(:variant => mod_db.variants)
+
+    @datasets =  dataset_variants.datasets & peptide_db.datasets
+
+    haml :dataset_plain_display
+end
+
+
+
+
+
+
 
 
 
@@ -42,19 +88,4 @@ get '/dataset/:datasetid/protein/list' do
 
 	haml :dataset_proteins
 
-end
-
-
-#List all the basic peptides in a dataset
-get '/peptide/:peptide/dataset/list' do
-    query_peptide = params[:peptide]
-    peptide_object = Basicpeptide.first(:sequence => query_peptide)
-    
-    if peptide_object == nil
-        return "{}"
-    end
-    
-    @datasets = peptide_object.datasets
-    @peptide = query_peptide
-    haml :peptide_datasets
 end
