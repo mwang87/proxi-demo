@@ -1,6 +1,7 @@
 get '/psm/:psmid' do
 	@psm = Datasetvariantspectrummatch.first(:id => params[:psmid])
 
+
 	haml :psm_page
 end
 
@@ -43,4 +44,113 @@ get '/protein/:protein/psm/list' do
     haml :psms_all
 end
 
+
+#Aggregate View
+
+#Aggregate View
+get '/psms/aggregateview' do
+	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    protein = params[:protein]
+    peptide = params[:peptide]
+    modification = params[:mod]
+
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+
+    filter_protein = false
+    filter_peptide = false
+    filter_mod = false
+
+    #DB Fields
+    peptides_db = nil
+    protein_db = nil
+    mod_db = nil
+
+    datasetvariants_peptide_db = nil
+    datasetvariants_mod_db = nil
+    datasetprotein_protein_db = nil
+
+    if protein.length > 2
+        filter_protein = true
+        protein_db = Protein.first(:name => protein)
+        datasetprotein_protein_db = DatasetProtein.all(:protein => protein_db)
+    end
+
+    if peptide.length > 1
+        filter_peptide = true
+        query_peptide = "%" + peptide + "%"
+        peptides_db = Peptide.all(:sequence.like => query_peptide)
+        datasetvariants_peptide_db = DatasetVariant.all(:variant => peptides_db.variants)
+    end
+
+    if modification.length > 2
+        filter_mod = true
+        mod_db = Modification.first(:name => modification)
+        datasetvariants_mod_db = DatasetVariant.all(:variant => mod_db.variants)
+        
+    end
+
+    #Now we do a big switch statement
+    if filter_protein and filter_peptide and filter_mod
+        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db & datasetvariants_mod_db, 
+        	:DatasetProtein => datasetprotein_protein_db,
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+
+        return haml :psms_all
+    end
+
+    if filter_protein and filter_peptide
+        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db, 
+        	:DatasetProtein => datasetprotein_protein_db,
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+
+        return haml :psms_all
+    end
+
+    if filter_peptide and filter_mod
+        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db & datasetvariants_mod_db, 
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+
+        return haml :psms_all
+    end
+
+    if filter_protein and filter_mod
+        @psms = Datasetvariantspectrummatch.all(:DatasetVariant =>  datasetvariants_mod_db, 
+        	:DatasetProtein => datasetprotein_protein_db,
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+
+        return haml :psms_all
+    end
+
+    if filter_protein
+        @psms = Datasetvariantspectrummatch.all(
+        	:DatasetProtein => datasetprotein_protein_db,
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+
+        return haml :psms_all
+    end
+
+    if filter_peptide
+        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db,
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+
+        return haml :psms_all
+    end
+
+    if filter_mod
+        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_mod_db,
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+
+        return haml :psms_all
+    end
+
+    return "MING"
+end
 

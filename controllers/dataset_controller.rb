@@ -94,7 +94,8 @@ get '/dataset/aggregateview' do
 
     if peptide.length > 2
         filter_peptide = true
-        peptide_db = Peptide.first(:sequence => peptide)
+        query_peptide = "%" + peptide + "%"
+        peptide_db = Peptide.first(:sequence.like => query_peptide)
         dataset_peptide_db = peptide_db.DatasetPeptide
     end
 
