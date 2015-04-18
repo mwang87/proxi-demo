@@ -24,6 +24,16 @@ get '/peptide/:peptide/dataset/list' do
     haml :dataset_plain_display
 end
 
+get '/protein/:protein/dataset/list' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
+    protein_db = Protein.first(:id => params[:protein])
+
+    @datasets =  protein_db.datasets
+
+    haml :dataset_plain_display
+end
+
 #DOUBLE CONDITIONS
 
 #Get Datasets that have peptide on this protein
@@ -54,7 +64,16 @@ end
 
 
 
+#Aggregate View
+get '/dataset/aggregateview' do
+    protein = params[:protein]
+    peptide = params[:peptide]
+    modification = params[:mod]
 
+
+
+    return "MING"
+end
 
 
 
