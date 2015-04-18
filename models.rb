@@ -71,8 +71,6 @@ class DatasetVariant
     belongs_to :dataset
 end
 
-
-
 class DatasetPeptide
     include DataMapper::Resource
     property :id,               Serial
@@ -111,6 +109,8 @@ class Protein
     has n, :DatasetProtein
     has n, :datasets, :through => :datasetprotein
 end
+
+
 
 
 DataMapper.finalize

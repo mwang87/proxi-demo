@@ -44,6 +44,16 @@ get '/protein/aggregateview' do
         
     end
 
+    if filter_peptide
+    	query_peptide = "%" + peptide + "%"
+    	peptides_db = Peptide.all(:sequence.like => query_peptide)
+        datasetvariants_peptide_db = DatasetVariant.all(:variant => peptides_db.variants)
+        psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db)
+        @all_proteins = psms.DatasetProtein.protein
+
+        return haml :protein_all
+    end
+
 
 end
 
