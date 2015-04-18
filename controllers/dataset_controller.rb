@@ -74,7 +74,47 @@ get '/dataset/aggregateview' do
     peptide = params[:peptide]
     modification = params[:mod]
 
-    
+    filter_protein = false
+    filter_peptide = false
+    filter_mod = false
+
+    #DB Fields
+    peptide_db = nil
+    protein_db = nil
+    mod_db = nil
+    dataset_variants_db = nil
+    dataset_peptide_db = nil
+    dataset_protein_db = nil
+
+    if protein.length > 2 
+        filter_protein = true
+        protein_db = Protein.first(:name => protein)
+        dataset_protein_db = protein_db.DatasetProtein
+    end
+
+    if peptide.length > 2
+        filter_peptide = true
+        peptide_db = Peptide.first(:sequence => peptide)
+        dataset_peptide_db = peptide_db.DatasetPeptide
+    end
+
+    if modification.length > 2
+        filter_mod = true
+        mod_db = Modification.first(:name => modification)
+        dataset_variants_db = DatasetVariant.all(:variant => mod_db.variants)
+    end
+
+    #Now we do a big switch statement
+    if filter_protein and filter_peptide and filter_mod
+        puts "DO ALL 3 BITCHES"
+        @datasets = Dataset.all(
+            :DatasetPeptide => dataset_peptide_db, 
+            :DatasetVariant => dataset_variants_db, 
+            :DatasetProtein => dataset_protein_db)
+
+        return haml :dataset_plain_display
+
+    end
 
     return "MING"
 end
