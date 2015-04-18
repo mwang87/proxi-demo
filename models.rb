@@ -48,7 +48,8 @@ class Peptide
     property :sequence,         String, :key => true, :index => true
     
     has n, :variants
-    has n, :datasets, :through => :datasetpeptide
+    has n, :DatasetPeptide
+    has n, :datasets, :through => :DatasetPeptide
 end
 
 class DatasetVariant
@@ -81,7 +82,11 @@ class Dataset
     property :id,               Serial
     property :name,             String
     
-    has n, :peptide, :through => :PeptideDataset
+    has n, :DatasetPeptide
+    has n, :DatasetVariant
+    has n, :DatasetProtein
+
+    has n, :peptide, :through => :DatasetPeptide
     has n, :variants, :through => :datasetvariant
     has n, :proteins, :through => :datasetprotein
 end
@@ -91,6 +96,7 @@ class Protein
     property :id,               Serial
     property :name,             String
     
+    has n, :DatasetProtein
     has n, :datasets, :through => :datasetprotein
 end
 

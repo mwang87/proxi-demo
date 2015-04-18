@@ -19,7 +19,8 @@ get '/peptide/:peptide/dataset/list' do
 
     peptide_db = Peptide.first(:sequence => params[:peptide])
 
-    @datasets =  peptide_db.datasets
+    dataset_peptide_db = peptide_db.DatasetPeptide
+    @datasets = Dataset.all(:DatasetPeptide => dataset_peptide_db)
 
     haml :dataset_plain_display
 end
@@ -43,7 +44,9 @@ get '/protein/:protein/peptide/:peptide/dataset/list' do
     peptide_db = Peptide.first(:sequence => params[:peptide])
     protein_db = Protein.first(:id => params[:protein])
 
-    @datasets = peptide_db.datasets & protein_db.datasets
+    dataset_peptide_db = peptide_db.DatasetPeptide
+    dataset_protein_db = protein_db.DatasetProtein
+    @datasets = Dataset.all(:DatasetPeptide => dataset_peptide_db, :DatasetProtein => dataset_protein_db)
 
     haml :dataset_plain_display
 end
@@ -55,9 +58,10 @@ get '/peptide/:peptide/modification/:mod/dataset/list' do
     peptide_db = Peptide.first(:sequence => params[:peptide])
     mod_db = Modification.first(:id => params[:mod])
 
-    dataset_variants = DatasetVariant.all(:variant => mod_db.variants)
+    dataset_variants_db = DatasetVariant.all(:variant => mod_db.variants)
+    dataset_peptide_db = peptide_db.DatasetPeptide
 
-    @datasets =  dataset_variants.datasets & peptide_db.datasets
+    @datasets = Dataset.all(:DatasetPeptide => dataset_peptide_db, :DatasetVariant => dataset_variants_db)
 
     haml :dataset_plain_display
 end
@@ -69,7 +73,6 @@ get '/dataset/aggregateview' do
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
-
 
 
     return "MING"
