@@ -18,10 +18,10 @@
         %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
         %p
         %label{:for => "aboutme"} Protein
-        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => ""}
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "", :id => "dataset_protein_input"}
         %p
         %label{:for => "aboutme"} Modification
-        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => ""}
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "", :id => "dataset_mod_input"}
     %input.btn.btn-default{:type => "submit", :value => "View Datasets"} 
 
 
@@ -62,3 +62,19 @@
         %label{:for => "aboutme"} Modification
         %input.form-control{:type => "text", :name => "mod", :class => "text", :value => ""}
     %input.btn.btn-default{:type => "submit", :value => "View Proteins"} 
+
+
+:javascript
+    all_proteins = #{@all_proteins.to_json}
+    all_modifications = #{@all_modifications.to_json}
+
+    $(function() {
+        $( "#dataset_mod_input" ).autocomplete({
+          source: all_modifications
+        });
+        $( "#dataset_protein_input" ).autocomplete({
+          source: all_proteins
+        });
+    });
+
+
