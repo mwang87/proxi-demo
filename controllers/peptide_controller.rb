@@ -128,6 +128,8 @@ get '/peptide/aggregateview' do
 
     if filter_mod
         @all_peptides = Peptide.all(:variants => variants_mod_db)
+        #puts "variants size: " + mod_db.variants.length.to_s
+        #@all_peptides = Peptide.all(:variants => mod_db.variants)
         return haml :peptide_all
     end
 
