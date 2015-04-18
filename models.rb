@@ -10,6 +10,7 @@ class Modification
     property :name,             String
     
     has n, :variants, :through => :ModificationVariant
+    has n, :peptides, :through => :ModificationPeptide
 end
 
 class ModificationVariant
@@ -19,6 +20,14 @@ class ModificationVariant
 
     belongs_to :modification
     belongs_to :variant
+end
+
+class ModificationPeptide
+    include DataMapper::Resource
+    property :id,               Serial
+    
+    belongs_to :modification
+    belongs_to :peptide
 end
 
 class Datasetvariantspectrummatch
@@ -50,6 +59,7 @@ class Peptide
     has n, :variants
     has n, :DatasetPeptide
     has n, :datasets, :through => :DatasetPeptide
+    has n, :modifications, :through => :modificationpeptide
 end
 
 class DatasetVariant
@@ -60,6 +70,8 @@ class DatasetVariant
     belongs_to :variant
     belongs_to :dataset
 end
+
+
 
 class DatasetPeptide
     include DataMapper::Resource

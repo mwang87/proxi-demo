@@ -127,9 +127,20 @@ get '/peptide/aggregateview' do
     end
 
     if filter_mod
-        @all_peptides = Peptide.all(:variants => variants_mod_db)
+        #adapter = DataMapper.repository(:default).adapter
+        #peptide_query = "SELECT * FROM peptides "
+        #peptide_query += "JOIN "
+
+        #SELECT * FROM peptides 
+        #JOIN variants ON variants.peptide_id=peptides.id
+        #JOIN modification_variants ON variants.id=modification_variants.variant_id
+        #JOIN modifications ON id=modification_variants.modification_id=modifications.id;
+        #WHERE modifications.id=1
+
+        #@all_peptides = Peptide.all(:variants => variants_mod_db)
         #puts "variants size: " + mod_db.variants.length.to_s
         #@all_peptides = Peptide.all(:variants => mod_db.variants)
+        @all_peptides = mod_db.peptides
         return haml :peptide_all
     end
 
