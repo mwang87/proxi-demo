@@ -33,7 +33,7 @@ def import_results_dataset(dataset_id)
     
     dataset_information = JSON.parse(result)
     task_id = dataset_information["task"]
-    print task_id
+    #puts task_id
     tab_list_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=view_result_list"
     
     tabs_list = JSON.parse(http_get(tab_list_url))["blockData"]
@@ -46,13 +46,15 @@ end
 def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     tab_information_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=group_by_spectrum&file=" + tsv_id
     tab_data = JSON.parse(http_get(tab_information_url))["blockData"]
+
+    puts "Parsing Tab: " + tsv_id + " with " + tab_data.length.to_s + " entries "
     
     psm_count = 0
     dataset_db = get_create_dataset(dataset_id)
     
     tab_data.each{ |psm_object|
         psm_count += 1
-        puts psm_count.to_s + " of " + tab_data.length.to_s
+        #puts psm_count.to_s + " of " + tab_data.length.to_s
         spectrum_file = psm_object["#SpecFile"]
         scan =  psm_object["nativeID_scan"]
         peptide = psm_object["modified_sequence"]

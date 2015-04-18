@@ -27,7 +27,7 @@ def get_create_peptide(peptide_sequence, modifications)
         #Creating connection
         mod_variant_db = ModificationVariant.first_or_create(:modification => modification_db, :variant => variant_object, :location => mod_location)
         mod_peptide_db = ModificationPeptide.first_or_create(:modification => modification_db, :peptide => peptide_object)
-        puts mod_name + "\t" + peptide_sequence
+        #puts mod_name + "\t" + peptide_sequence
     }
 
     return peptide_object, variant_object
