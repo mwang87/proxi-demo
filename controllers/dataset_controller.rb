@@ -106,15 +106,15 @@ get '/dataset/aggregateview' do
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
-        puts "DO ALL 3 BITCHES"
         @datasets = Dataset.all(
             :DatasetPeptide => dataset_peptide_db, 
             :DatasetVariant => dataset_variants_db, 
             :DatasetProtein => dataset_protein_db)
 
         return haml :dataset_plain_display
-
     end
+
+    #TODO SUPPORT THE OTHER 6 options
 
     return "MING"
 end
