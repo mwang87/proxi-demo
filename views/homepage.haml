@@ -11,3 +11,54 @@
         %tr
             %td
                 %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/list"} View Modifications
+
+%form{:action => "/dataset/aggregateview", :method => "get"}
+    .form-group
+        %label{:for => "name"} Peptide
+        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Protein
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Modification
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => ""}
+    %input.btn.btn-default{:type => "submit", :value => "View Datasets"} 
+
+
+%form{:action => "/peptide/aggregateview", :method => "get"}
+    .form-group
+        %label{:for => "name"} Peptide
+        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Protein
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Modification
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => ""}
+    %input.btn.btn-default{:type => "submit", :value => "View Peptides"} 
+
+%form{:action => "/psm/aggregateview", :method => "get"}
+    .form-group
+        %label{:for => "name"} Peptide
+        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Protein
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Modification
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => ""}
+    %input.btn.btn-default{:type => "submit", :value => "View PSMs"} 
+
+
+
+%form{:action => "/protein/aggregateview", :method => "get"}
+    .form-group
+        %label{:for => "name"} Peptide
+        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Protein
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => ""}
+        %p
+        %label{:for => "aboutme"} Modification
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => ""}
+    %input.btn.btn-default{:type => "submit", :value => "View Proteins"} 
