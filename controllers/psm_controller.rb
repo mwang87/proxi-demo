@@ -1,6 +1,5 @@
 get '/psm/:psmid' do
-	@psm = Datasetvariantspectrummatch.first(:id => params[:psmid])
-
+	@psm = Peptidespectrummatch.first(:id => params[:psmid])
 
 	haml :psm_page
 end
@@ -66,10 +65,6 @@ get '/psms/aggregateview' do
     protein_db = nil
     mod_db = nil
 
-    datasetvariants_peptide_db = nil
-    datasetvariants_mod_db = nil
-    datasetprotein_protein_db = nil
-
     if protein.length > 2
         filter_protein = true
         protein_db = Protein.first(:name => protein)
@@ -88,34 +83,42 @@ get '/psms/aggregateview' do
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
-        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db & datasetvariants_mod_db, 
-        	:DatasetProtein => datasetprotein_protein_db,
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        @psms = Peptidespectrummatch.all(
+    		:peptide => peptides_db,
+    		:protein => protein_db,
+    		:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
+    		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
         return haml :psms_all
     end
 
     if filter_protein and filter_peptide
-        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db, 
-        	:DatasetProtein => datasetprotein_protein_db,
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        @psms = Peptidespectrummatch.all(
+    		:peptide => peptides_db,
+    		:protein => protein_db,
+    		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
         return haml :psms_all
     end
 
     if filter_peptide and filter_mod
-        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db & datasetvariants_mod_db, 
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+    	#likely need to write custom sql to optimize, TODO
+    	@psms = Peptidespectrummatch.all(
+    		:peptide => peptides_db,
+    		:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
+    		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
-
+        
         return haml :psms_all
     end
 
     if filter_protein and filter_mod
-        @psms = Datasetvariantspectrummatch.all(:DatasetVariant =>  datasetvariants_mod_db, 
-        	:DatasetProtein => datasetprotein_protein_db,
+    	#likely need to write custom sql to optimize, TODO
+    	@psms = Peptidespectrummatch.all(
+    		:protein => protein_db,
+    		:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
@@ -133,13 +136,15 @@ get '/psms/aggregateview' do
     end
 
     if filter_peptide
-        @psms = Peptidespectrummatch.all(:peptide => peptides_db,
+        @psms = Peptidespectrummatch.all(
+        	:peptide => peptides_db,
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
         return haml :psms_all
     end
 
     if filter_mod
+    	#likely need to write custom sql to optimize, TODO
         @psms = Peptidespectrummatch.all(
         	:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
         	:offset => (page_number - 1) * PAGINATION_SIZE, 

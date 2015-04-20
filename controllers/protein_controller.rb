@@ -46,14 +46,14 @@ get '/protein/aggregateview' do
     if filter_mod
         mod_db = Modification.first(:name => modification)
         @all_proteins = Protein.all(:modificationprotein => ModificationProtein.all(:modification => mod_db))
-        
+
         return haml :protein_all
     end
 
     if filter_peptide
     	query_peptide = "%" + peptide + "%"
-    	peptides_db = Peptide.all(:sequence.like => query_peptide)
-        @all_proteins = Protein.all(:peptideprotein => PeptideProtein.all(:peptide => peptides_db))
+        #Likely need grouping for further optimization
+        @all_proteins = Protein.all(:peptideprotein => PeptideProtein.all(:sequence.like => query_peptide))
 
         return haml :protein_all
     end

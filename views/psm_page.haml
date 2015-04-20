@@ -2,10 +2,13 @@
     %table.table.table-striped.table-condensed.tablesorter
         %tr
             %td{:style=>"vertical-align:middle"}= "Peptide"
-            %td{:style=>"vertical-align:middle"}= @psm.DatasetVariant.variant.sequence
+            %td{:style=>"vertical-align:middle"}= @psm.variant.sequence
         %tr
             %td{:style=>"vertical-align:middle"}= "Dataset"
-            %td{:style=>"vertical-align:middle"}= @psm.DatasetVariant.dataset.name
+            %td{:style=>"vertical-align:middle"}= @psm.dataset.name
+        %tr
+            %td{:style=>"vertical-align:middle"}= "Protein"
+            %td{:style=>"vertical-align:middle"}= @psm.protein.name
         %tr
             %td{:style=>"vertical-align:middle"}= "Filename"
             %td{:style=>"vertical-align:middle"}= @psm.filename
