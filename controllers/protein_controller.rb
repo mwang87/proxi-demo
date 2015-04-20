@@ -45,19 +45,15 @@ get '/protein/aggregateview' do
 
     if filter_mod
         mod_db = Modification.first(:name => modification)
-        datasetvariants_mod_db = DatasetVariant.all(:variant => mod_db.peptides.variants)
-        psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_mod_db)
-        @all_proteins = psms.DatasetProtein.protein
-
+        @all_proteins = Protein.all(:modificationprotein => ModificationProtein.all(:modification => mod_db))
+        
         return haml :protein_all
     end
 
     if filter_peptide
     	query_peptide = "%" + peptide + "%"
     	peptides_db = Peptide.all(:sequence.like => query_peptide)
-        datasetvariants_peptide_db = DatasetVariant.all(:variant => peptides_db.variants)
-        psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db)
-        @all_proteins = psms.DatasetProtein.protein
+        @all_proteins = Protein.all(:peptideprotein => PeptideProtein.all(:peptide => peptides_db))
 
         return haml :protein_all
     end

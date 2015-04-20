@@ -7,7 +7,7 @@ DataMapper::Property::String.length(255)
 class Peptide
     include DataMapper::Resource
     property :id,               Serial
-    property :sequence,         String, :key => true, :index => true
+    property :sequence,         String
 
     has n, :modifications, :through => :modificationpeptide
     has n, :proteins, :through => :peptideprotein

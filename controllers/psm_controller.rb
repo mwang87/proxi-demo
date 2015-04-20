@@ -133,15 +133,9 @@ get '/psms/aggregateview' do
     end
 
     if filter_peptide
-    	#puts peptides_db[0].id
-    	#BROKEN FIX
-    	puts Peptide.all(:sequence => peptide)
-
-        @psms = Peptidespectrummatch.all(:peptide => Peptide.all(:sequence => peptide),
+        @psms = Peptidespectrummatch.all(:peptide => peptides_db,
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
-        puts @psms
-        puts "BITCH"
         return haml :psms_all
     end
 

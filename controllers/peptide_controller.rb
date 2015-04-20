@@ -129,12 +129,7 @@ get '/peptide/aggregateview' do
     end
 
     if filter_mod
-        #Hass Problems, TODO FIX
-        puts mod_db.id
-        puts ModificationPeptide.all(:modification => mod_db)
         @all_peptides = Peptide.all(:modificationpeptide => {:modification => mod_db})
-        puts @all_peptides
-        puts "BALLS"
         return haml :peptide_all
     end
 
