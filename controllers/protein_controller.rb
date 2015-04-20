@@ -1,5 +1,4 @@
 #Zero Conditions
-
 get '/protein/list' do
 	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
 
@@ -41,7 +40,16 @@ get '/protein/aggregateview' do
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
-        
+
+    end
+
+    if filter_mod
+        mod_db = Modification.first(:name => modification)
+        datasetvariants_mod_db = DatasetVariant.all(:variant => mod_db.peptides.variants)
+        psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_mod_db)
+        @all_proteins = psms.DatasetProtein.protein
+
+        return haml :protein_all
     end
 
     if filter_peptide

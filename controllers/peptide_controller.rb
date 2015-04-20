@@ -60,6 +60,8 @@ end
 
 #Aggregate View
 get '/peptide/aggregateview' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+    
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
@@ -120,7 +122,9 @@ get '/peptide/aggregateview' do
     end
 
     if filter_peptide
-        @all_peptides = peptides_db
+        @all_peptides = peptides_db.all(
+            :offset => (page_number - 1) * PAGINATION_SIZE , 
+            :limit => PAGINATION_SIZE)
         return haml :peptide_all
     end
 
