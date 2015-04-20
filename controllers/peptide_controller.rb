@@ -61,7 +61,7 @@ end
 #Aggregate View
 get '/peptide/aggregateview' do
     page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-    
+
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
@@ -80,8 +80,6 @@ get '/peptide/aggregateview' do
     if protein.length > 2
         filter_protein = true
         protein_db = Protein.first(:name => protein)
-        psms = Datasetvariantspectrummatch.all(:DatasetProtein => DatasetProtein.all(:protein => protein_db))  
-        variants_protein_db = psms.DatasetVariant.variant
     end
 
     if peptide.length > 2
@@ -117,7 +115,9 @@ get '/peptide/aggregateview' do
     end
 
     if filter_protein
-        @all_peptides = Peptide.all(:variants => variants_protein_db)
+        @all_peptides = Peptide.all(:peptideprotein => PeptideProtein.all(:protein => protein_db),
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
         return haml :peptide_all
     end
 
@@ -129,7 +129,12 @@ get '/peptide/aggregateview' do
     end
 
     if filter_mod
-        @all_peptides = mod_db.peptides
+        #Hass Problems, TODO FIX
+        puts mod_db.id
+        puts ModificationPeptide.all(:modification => mod_db)
+        @all_peptides = Peptide.all(:modificationpeptide => {:modification => mod_db})
+        puts @all_peptides
+        puts "BALLS"
         return haml :peptide_all
     end
 

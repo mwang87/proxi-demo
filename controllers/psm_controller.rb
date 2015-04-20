@@ -73,21 +73,17 @@ get '/psms/aggregateview' do
     if protein.length > 2
         filter_protein = true
         protein_db = Protein.first(:name => protein)
-        datasetprotein_protein_db = DatasetProtein.all(:protein => protein_db)
     end
 
     if peptide.length > 2
         filter_peptide = true
         query_peptide = "%" + peptide + "%"
         peptides_db = Peptide.all(:sequence.like => query_peptide)
-        datasetvariants_peptide_db = DatasetVariant.all(:variant => peptides_db.variants)
     end
 
     if modification.length > 2
         filter_mod = true
         mod_db = Modification.first(:name => modification)
-        datasetvariants_mod_db = DatasetVariant.all(:variant => mod_db.variants)
-        
     end
 
     #Now we do a big switch statement
@@ -127,24 +123,31 @@ get '/psms/aggregateview' do
     end
 
     if filter_protein
-        @psms = Datasetvariantspectrummatch.all(
-        	:DatasetProtein => datasetprotein_protein_db,
+        @psms = Peptidespectrummatch.all(
+        	:protein => protein_db,
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
+        puts @psms
         return haml :psms_all
     end
 
     if filter_peptide
-        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_peptide_db,
+    	#puts peptides_db[0].id
+    	#BROKEN FIX
+    	puts Peptide.all(:sequence => peptide)
+
+        @psms = Peptidespectrummatch.all(:peptide => Peptide.all(:sequence => peptide),
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
-
+        puts @psms
+        puts "BITCH"
         return haml :psms_all
     end
 
     if filter_mod
-        @psms = Datasetvariantspectrummatch.all(:DatasetVariant => datasetvariants_mod_db,
+        @psms = Peptidespectrummatch.all(
+        	:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 

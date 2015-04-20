@@ -1,36 +1,29 @@
 
 
-def get_create_psm(variant_db, dataset_db, join_dataset_variant, protein_dataset_join, tab_file, scan_number, filename)   
-    psm = Datasetvariantspectrummatch.create(
+def get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tab_file, scan_number, filename)   
+    psm = Peptidespectrummatch.first_or_create(
         :filename => filename, 
         :scan => scan_number, 
         :tabfile => tab_file, 
-        :DatasetVariant => join_dataset_variant,
-        :DatasetProtein => protein_dataset_join)
+        :variant => variant_db,
+        :dataset => dataset_db,
+        :peptide => peptide_db, 
+        :protein => protein_db)
+    
 
+    return psm
 end
 
 
-def get_create_peptide(peptide_sequence, modifications)
+def get_create_peptide(peptide_sequence, dataset_db, protein_db)
     stripped_sequence = peptide_sequence.gsub(/\W+/, '').gsub(/\d\s?/, '')    
-    peptide_object = Peptide.first_or_create(:sequence => stripped_sequence)
-    peptide_object.save
-    variant_object = Variant.first_or_create(:sequence => peptide_sequence, :peptide => peptide_object)
+    peptide_db = Peptide.first_or_create(:sequence => stripped_sequence)
+    variant_db = Variant.first_or_create(:sequence => peptide_sequence, :peptide => peptide_db)
 
-    #Adding Modifications
-    modifications.each { |modification|
-        modification_split = modification.split("-")
-        mod_name = modification_split[1]
-        mod_location = modification_split[0]
-        modification_db = Modification.first_or_create(:name => mod_name)
+    DatasetPeptide.first_or_create(:dataset => dataset_db, :peptide => peptide_db, :sequence => stripped_sequence)
+    PeptideProtein.first_or_create(:protein => protein_db, :peptide => peptide_db, :sequence => stripped_sequence)
 
-        #Creating connection
-        mod_variant_db = ModificationVariant.first_or_create(:modification => modification_db, :variant => variant_object, :location => mod_location)
-        mod_peptide_db = ModificationPeptide.first_or_create(:modification => modification_db, :peptide => peptide_object)
-        #puts mod_name + "\t" + peptide_sequence
-    }
-
-    return peptide_object, variant_object
+    return peptide_db, variant_db
 end
 
 def get_create_dataset(dataset_name)
