@@ -25,38 +25,76 @@ get '/protein/aggregateview' do
     filter_peptide = false
     filter_mod = false
 
+    query_peptide = ""
+    mod_db = nil
 
     if protein.length > 2
         filter_protein = true
     end
 
     if peptide.length > 2
+        query_peptide = "%" + peptide + "%"
         filter_peptide = true
     end
 
     if modification.length > 2
         filter_mod = true
+        mod_db = Modification.first(:name => modification)
     end
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
+        @all_proteins = Protein.all(
+            :modificationprotein => ModificationProtein.all(:modification => mod_db),
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
+            :name => protein)
+        return haml :protein_all
+    end
 
+    if filter_peptide and filter_mod
+        @all_proteins = Protein.all(
+            :modificationprotein => ModificationProtein.all(:modification => mod_db),
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide))
+        return haml :protein_all
+    end
+
+    if filter_protein and filter_mod
+        @all_proteins = Protein.all(
+            :modificationprotein => ModificationProtein.all(:modification => mod_db),
+            :name => protein)
+        return haml :protein_all
+    end
+
+    if filter_protein and filter_peptide
+        @all_proteins = Protein.all(
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
+            :name => protein)
+        return haml :protein_all
     end
 
     if filter_mod
-        mod_db = Modification.first(:name => modification)
         @all_proteins = Protein.all(:modificationprotein => ModificationProtein.all(:modification => mod_db))
 
         return haml :protein_all
     end
 
     if filter_peptide
-    	query_peptide = "%" + peptide + "%"
+        #puts PeptideProtein.all(:sequence.like => query_peptide)
+        #puts "SEPARATOR"
+        #puts PeptideProtein.all(:unique => true, :fields => [:protein_id], :sequence.like => query_peptide)
         #Likely need grouping for further optimization
         @all_proteins = Protein.all(:peptideprotein => PeptideProtein.all(:sequence.like => query_peptide))
 
         return haml :protein_all
     end
+
+    if filter_protein
+        @all_proteins = Protein.all(:name => protein)
+
+        return haml :protein_all
+    end
+
+    ##Need to optimize peptide proteins 
 
 
 end

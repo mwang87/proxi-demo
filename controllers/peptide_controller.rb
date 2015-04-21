@@ -95,27 +95,42 @@ get '/peptide/aggregateview' do
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
-        @all_peptides = peptides_db.all(:variants => variants_protein_db) & mod_db.peptides
+        @all_peptides = peptides_db.all(
+            :peptideprotein => PeptideProtein.all(:protein => protein_db),
+            :modificationpeptide => {:modification => mod_db},
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
         return haml :peptide_all
     end
 
     if filter_protein and filter_peptide
-        @all_peptides = peptides_db.all(:variants => variants_protein_db)
+        @all_peptides = peptides_db.all(
+            :peptideprotein => PeptideProtein.all(:protein => protein_db),
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
         return haml :peptide_all
     end
 
     if filter_peptide and filter_mod
-        @all_peptides = peptides_db & mod_db.peptides
+        @all_peptides = peptides_db.all(
+            :modificationpeptide => {:modification => mod_db},
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
         return haml :peptide_all
     end
 
     if filter_protein and filter_mod
-        @all_peptides = Peptide.all(:variants => variants_protein_db) & mod_db.peptides
+        @all_peptides = Peptide.all(
+            :peptideprotein => PeptideProtein.all(:protein => protein_db),
+            :modificationpeptide => {:modification => mod_db},
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
         return haml :peptide_all
     end
 
     if filter_protein
-        @all_peptides = Peptide.all(:peptideprotein => PeptideProtein.all(:protein => protein_db),
+        @all_peptides = Peptide.all(
+            :peptideprotein => PeptideProtein.all(:protein => protein_db),
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
         return haml :peptide_all
@@ -129,9 +144,14 @@ get '/peptide/aggregateview' do
     end
 
     if filter_mod
-        @all_peptides = Peptide.all(:modificationpeptide => {:modification => mod_db})
+        @all_peptides = Peptide.all(
+            :modificationpeptide => {:modification => mod_db},
+            :offset => (page_number - 1) * PAGINATION_SIZE , 
+            :limit => PAGINATION_SIZE)
         return haml :peptide_all
     end
+
+    ###Need to write custom SQL to properly do the joins with modifications
 
     return "MING"
 end
