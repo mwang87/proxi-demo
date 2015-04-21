@@ -5,7 +5,7 @@ require 'redis'
 DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/data.db")
 #DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/postgres' )
 
-PAGINATION_SIZE = 30
+PAGINATION_SIZE = 10
 
 # puts ENV["RACK_ENV"]
 # configure :test do

@@ -54,7 +54,17 @@ get '/psms/aggregateview' do
     peptide = params[:peptide]
     modification = params[:mod]
 
+    #Web Rendering Code
+    @protein_input = protein
+    @peptide_input = peptide
+    @modification_input = modification
+
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+
+    @all_proteins = Protein.all().map(&:name)
+    @all_modifications = Modification.all().map(&:name)
+
+    #Actual Processing
 
     filter_protein = false
     filter_peptide = false
@@ -90,7 +100,7 @@ get '/psms/aggregateview' do
     		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
-        return haml :psms_all
+        return haml :psms_aggregate
     end
 
     if filter_protein and filter_peptide
@@ -100,7 +110,7 @@ get '/psms/aggregateview' do
     		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
-        return haml :psms_all
+        return haml :psms_aggregate
     end
 
     if filter_peptide and filter_mod
@@ -111,7 +121,7 @@ get '/psms/aggregateview' do
     		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
         
-        return haml :psms_all
+        return haml :psms_aggregate
     end
 
     if filter_protein and filter_mod
@@ -122,7 +132,7 @@ get '/psms/aggregateview' do
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
-        return haml :psms_all
+        return haml :psms_aggregate
     end
 
     if filter_protein
@@ -132,7 +142,7 @@ get '/psms/aggregateview' do
         	:limit => PAGINATION_SIZE)
 
         puts @psms
-        return haml :psms_all
+        return haml :psms_aggregate
     end
 
     if filter_peptide
@@ -140,7 +150,7 @@ get '/psms/aggregateview' do
         	:peptide => peptides_db,
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
-        return haml :psms_all
+        return haml :psms_aggregate
     end
 
     if filter_mod
@@ -150,8 +160,13 @@ get '/psms/aggregateview' do
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
-        return haml :psms_all
+        return haml :psms_aggregate
     end
 
+    @psms = Peptidespectrummatch.all(
+        	:offset => (page_number - 1) * PAGINATION_SIZE, 
+        	:limit => PAGINATION_SIZE)
+    
+    return haml :psms_aggregate
 end
 
