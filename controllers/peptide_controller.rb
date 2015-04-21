@@ -66,6 +66,30 @@ get '/peptide/aggregateview' do
     peptide = params[:peptide]
     modification = params[:mod]
 
+    if protein == nil
+        protein = ""
+    end
+
+    if peptide == nil
+        peptide = ""
+    end
+
+    if modification == nil
+        modification = ""
+    end
+
+    #Web Rendering Code
+    @protein_input = protein
+    @peptide_input = peptide
+    @modification_input = modification
+
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+
+    @all_proteins = Protein.all().map(&:name)
+    @all_modifications = Modification.all().map(&:name)
+
+    #Actual Processing  
+
     filter_protein = false
     filter_peptide = false
     filter_mod = false
@@ -100,7 +124,7 @@ get '/peptide/aggregateview' do
             :modificationpeptide => {:modification => mod_db},
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
-        return haml :peptide_all
+        return haml :peptide_aggregate
     end
 
     if filter_protein and filter_peptide
@@ -108,7 +132,7 @@ get '/peptide/aggregateview' do
             :peptideprotein => PeptideProtein.all(:protein => protein_db),
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
-        return haml :peptide_all
+        return haml :peptide_aggregate
     end
 
     if filter_peptide and filter_mod
@@ -116,7 +140,7 @@ get '/peptide/aggregateview' do
             :modificationpeptide => {:modification => mod_db},
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
-        return haml :peptide_all
+        return haml :peptide_aggregate
     end
 
     if filter_protein and filter_mod
@@ -125,7 +149,7 @@ get '/peptide/aggregateview' do
             :modificationpeptide => {:modification => mod_db},
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
-        return haml :peptide_all
+        return haml :peptide_aggregate
     end
 
     if filter_protein
@@ -133,14 +157,14 @@ get '/peptide/aggregateview' do
             :peptideprotein => PeptideProtein.all(:protein => protein_db),
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
-        return haml :peptide_all
+        return haml :peptide_aggregate
     end
 
     if filter_peptide
         @all_peptides = peptides_db.all(
             :offset => (page_number - 1) * PAGINATION_SIZE , 
             :limit => PAGINATION_SIZE)
-        return haml :peptide_all
+        return haml :peptide_aggregate
     end
 
     if filter_mod
@@ -148,11 +172,14 @@ get '/peptide/aggregateview' do
             :modificationpeptide => {:modification => mod_db},
             :offset => (page_number - 1) * PAGINATION_SIZE , 
             :limit => PAGINATION_SIZE)
-        return haml :peptide_all
+        return haml :peptide_aggregate
     end
 
     ###Need to write custom SQL to properly do the joins with modifications
 
-    return "MING"
+    @all_peptides = Peptide.all(
+            :offset => (page_number - 1) * PAGINATION_SIZE , 
+            :limit => PAGINATION_SIZE)
+    return haml :peptide_aggregate
 end
 

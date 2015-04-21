@@ -85,6 +85,18 @@ get '/dataset/aggregateview' do
     peptide = params[:peptide]
     modification = params[:mod]
 
+    if protein = nil
+        protein = ""
+    end
+
+    if peptide = nil
+        peptide = ""
+    end
+
+    if modification = nil
+        modification = ""
+    end
+
     filter_protein = false
     filter_peptide = false
     filter_mod = false

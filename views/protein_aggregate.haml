@@ -3,7 +3,7 @@
 - if @previous_page != nil
     %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}"} Prev Page
 
-%form{:action => "/psms/aggregateview", :method => "get"}
+%form{:action => "/protein/aggregateview", :method => "get"}
     .form-group
         %label{:for => "name"} Peptide
         %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => "#{@peptide_input}"}
@@ -13,29 +13,24 @@
         %p
         %label{:for => "aboutme"} Modification
         %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "#{@modification_input}", :class => "dataset_mod_input"}
-    %input.btn.btn-default{:type => "submit", :value => "Update PSMs"} 
+    %input.btn.btn-default{:type => "submit", :value => "Update Proteins"} 
+
 
 
 %table.table.table-striped.table-condensed.tablesorter
     %thead
         %tr
             %th
-            %th filename
-            %th scan
-            %th sequence
-            %th protein
-            %th dataset
-    - @psms.each do |psm|
+            %th Protein Name
+    - @all_proteins.each do |protein|
         %tr
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/psm/#{psm.id}"} View PSM
-            %td{:style=>"vertical-align:middle"}= psm.filename
-            %td{:style=>"vertical-align:middle"}= psm.scan
-            %td{:style=>"vertical-align:middle"}= psm.variant.sequence
-            %td{:style=>"vertical-align:middle"}= psm.protein.name
-            %td{:style=>"vertical-align:middle"}= psm.dataset.name
-
-
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{protein.id}/dataset/list"} View Datasets
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{protein.id}/peptide/list"} View Peptides
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/#{protein.id}/psm/list"} View PSMs
+            %td{:style=>"vertical-align:middle"}= protein.name
 
 :javascript
     all_proteins = #{@all_proteins.to_json}
@@ -49,4 +44,3 @@
           source: all_proteins
         });
     });
-

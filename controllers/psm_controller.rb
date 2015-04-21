@@ -49,10 +49,22 @@ end
 #Aggregate View
 get '/psms/aggregateview' do
 	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
+	
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
+
+    if protein == nil
+        protein = ""
+    end
+
+    if peptide == nil
+        peptide = ""
+    end
+
+    if modification == nil
+        modification = ""
+    end
 
     #Web Rendering Code
     @protein_input = protein
@@ -166,7 +178,7 @@ get '/psms/aggregateview' do
     @psms = Peptidespectrummatch.all(
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
-    
+
     return haml :psms_aggregate
 end
 

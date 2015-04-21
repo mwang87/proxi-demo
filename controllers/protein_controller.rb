@@ -17,9 +17,35 @@ end
 
 #Aggregate View
 get '/protein/aggregateview' do
+    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
+
+    if protein == nil
+        protein = ""
+    end
+
+    if peptide == nil
+        peptide = ""
+    end
+
+    if modification == nil
+        modification = ""
+    end
+
+    #Web Rendering Code
+    @protein_input = protein
+    @peptide_input = peptide
+    @modification_input = modification
+
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+
+    @all_proteins = Protein.all().map(&:name)
+    @all_modifications = Modification.all().map(&:name)
+
+    #Actual Processing  
 
     filter_protein = false
     filter_peptide = false
@@ -47,35 +73,45 @@ get '/protein/aggregateview' do
         @all_proteins = Protein.all(
             :modificationprotein => ModificationProtein.all(:modification => mod_db),
             :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :name => protein)
-        return haml :protein_all
+            :name => protein,
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
+        return haml :protein_aggregate
     end
 
     if filter_peptide and filter_mod
         @all_proteins = Protein.all(
             :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide))
-        return haml :protein_all
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
+        return haml :protein_aggregate
     end
 
     if filter_protein and filter_mod
         @all_proteins = Protein.all(
             :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :name => protein)
-        return haml :protein_all
+            :name => protein,
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
+        return haml :protein_aggregate
     end
 
     if filter_protein and filter_peptide
         @all_proteins = Protein.all(
             :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :name => protein)
-        return haml :protein_all
+            :name => protein,
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
+        return haml :protein_aggregate
     end
 
     if filter_mod
-        @all_proteins = Protein.all(:modificationprotein => ModificationProtein.all(:modification => mod_db))
+        @all_proteins = Protein.all(:modificationprotein => ModificationProtein.all(:modification => mod_db),
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
 
-        return haml :protein_all
+        return haml :protein_aggregate
     end
 
     if filter_peptide
@@ -83,19 +119,29 @@ get '/protein/aggregateview' do
         #puts "SEPARATOR"
         #puts PeptideProtein.all(:unique => true, :fields => [:protein_id], :sequence.like => query_peptide)
         #Likely need grouping for further optimization
-        @all_proteins = Protein.all(:peptideprotein => PeptideProtein.all(:sequence.like => query_peptide))
+        @all_proteins = Protein.all(:peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
 
-        return haml :protein_all
+        return haml :protein_aggregate
     end
 
     if filter_protein
-        @all_proteins = Protein.all(:name => protein)
+        @all_proteins = Protein.all(:name => protein,
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
 
-        return haml :protein_all
+        return haml :protein_aggregate
     end
 
     ##Need to optimize peptide proteins 
 
+
+    @all_proteins = Protein.all(
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
+
+    return haml :protein_aggregate
 
 end
 
