@@ -19,13 +19,21 @@
 %table.table.table-striped.table-condensed.tablesorter
     %thead
         %tr
-            %th PSMs
+            %th
+            %th
+            %th
             %th Sequence
+            %th PSM Count
     - @all_peptides.each do |peptide|
         %tr
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/peptide/#{peptide.sequence}/psm/list"} View PSMs
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/protein/aggregateview?peptide=#{peptide.sequence}&protein=#{@protein_input}&mod=#{@modification_input}"} View Proteins
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/dataset/aggregateview?peptide=#{peptide.sequence}&protein=#{@protein_input}&mod=#{@modification_input}"} View Datasets
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/psms/aggregateview?peptide=#{peptide.sequence}&protein=#{@protein_input}&mod=#{@modification_input}"} View PSMs
             %td{:style=>"vertical-align:middle"}= peptide.sequence
+            %td{:style=>"vertical-align:middle"}= peptide.peptidespectrummatch.count
 
 
 :javascript

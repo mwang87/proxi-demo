@@ -101,6 +101,8 @@ class Protein
     has n, :peptides, :through => :peptideprotein
     has n, :modifications, :through => :modificationprotein
     has n, :datasets, :through => :datasetprotein
+
+    has n, :peptidespectrummatch
 end
 
 class DatasetProtein

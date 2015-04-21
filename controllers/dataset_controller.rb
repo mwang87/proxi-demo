@@ -99,6 +99,17 @@ get '/dataset/aggregateview' do
         modification = ""
     end
 
+    #Web Rendering Code
+    @protein_input = protein
+    @peptide_input = peptide
+    @modification_input = modification
+
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+
+    @all_proteins = Protein.all().map(&:name)
+    @all_modifications = Modification.all().map(&:name)
+
+    #Actual Processing  
 
     filter_protein = false
     filter_peptide = false
