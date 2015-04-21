@@ -1,0 +1,50 @@
+- if @next_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@next_page}"} Next Page
+- if @previous_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}"} Prev Page
+
+%form{:action => "/psms/aggregateview", :method => "get"}
+    .form-group
+        %label{:for => "name"} Peptide
+        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => "#{@peptide_input}"}
+        %p
+        %label{:for => "aboutme"} Protein
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "#{@protein_input}", :class => "dataset_protein_input"}
+        %p
+        %label{:for => "aboutme"} Modification
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "#{@modification_input}", :class => "dataset_mod_input"}
+    %input.btn.btn-default{:type => "submit", :value => "Update PSMs"} 
+
+
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th filename
+            %th scan
+            %th sequence
+            %th protein
+    - @psms.each do |psm|
+        %tr
+            %td
+                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/psm/#{psm.id}"} View PSM
+            %td{:style=>"vertical-align:middle"}= psm.filename
+            %td{:style=>"vertical-align:middle"}= psm.scan
+            %td{:style=>"vertical-align:middle"}= psm.variant.sequence
+            %td{:style=>"vertical-align:middle"}= psm.protein.name
+
+
+
+:javascript
+    all_proteins = #{@all_proteins.to_json}
+    all_modifications = #{@all_modifications.to_json}
+
+    $(function() {
+        $( ".dataset_mod_input" ).autocomplete({
+          source: all_modifications
+        });
+        $( ".dataset_protein_input" ).autocomplete({
+          source: all_proteins
+        });
+    });
+
