@@ -18,57 +18,6 @@
             %td
                 %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/list"} View Modifications
 
-%form{:action => "/dataset/aggregateview", :method => "get"}
-    .form-group
-        %label{:for => "name"} Peptide
-        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
-        %p
-        %label{:for => "aboutme"} Protein
-        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "", :class => "dataset_protein_input"}
-        %p
-        %label{:for => "aboutme"} Modification
-        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "", :class => "dataset_mod_input"}
-    %input.btn.btn-default{:type => "submit", :value => "View Datasets"} 
-
-
-%form{:action => "/peptide/aggregateview", :method => "get"}
-    .form-group
-        %label{:for => "name"} Peptide
-        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
-        %p
-        %label{:for => "aboutme"} Protein
-        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "", :class => "dataset_protein_input"}
-        %p
-        %label{:for => "aboutme"} Modification
-        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "", :class => "dataset_mod_input"}
-    %input.btn.btn-default{:type => "submit", :value => "View Peptides"} 
-
-%form{:action => "/psms/aggregateview", :method => "get"}
-    .form-group
-        %label{:for => "name"} Peptide
-        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
-        %p
-        %label{:for => "aboutme"} Protein
-        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "", :class => "dataset_protein_input"}
-        %p
-        %label{:for => "aboutme"} Modification
-        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "", :class => "dataset_mod_input"}
-    %input.btn.btn-default{:type => "submit", :value => "View PSMs"} 
-
-
-
-%form{:action => "/protein/aggregateview", :method => "get"}
-    .form-group
-        %label{:for => "name"} Peptide
-        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => ""}
-        %p
-        %label{:for => "aboutme"} Protein
-        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "", :class => "dataset_protein_input"}
-        %p
-        %label{:for => "aboutme"} Modification
-        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "", :class => "dataset_mod_input"}
-    %input.btn.btn-default{:type => "submit", :value => "View Proteins"} 
-
 
 :javascript
     all_proteins = #{@all_proteins.to_json}
