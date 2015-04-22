@@ -27,7 +27,7 @@
     - @psms.each do |psm|
         %tr
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/psm/#{psm.id}"} View PSM
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psm/#{psm.id}"} View PSM
             %td{:style=>"vertical-align:middle"}= psm.scan
             %td{:style=>"vertical-align:middle"}= psm.sequence
             %td{:style=>"vertical-align:middle"}= psm.protein.name

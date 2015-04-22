@@ -1,7 +1,27 @@
-
-
-%a.btn.btn-default.pull-right{:style=>"margin-left: 20px; margin-bottom: 20px", :href => "/peptide/aggregateview"} View Peptides
-%a.btn.btn-default.pull-right{:style=>"margin-left: 20px; margin-bottom: 20px", :href => "/protein/aggregateview"} View Proteins
-%a.btn.btn-default.pull-right{:style=>"margin-left: 20px; margin-bottom: 20px", :href => "/dataset/aggregateview"} View Datasets
-%a.btn.btn-default.pull-right{:style=>"margin-left: 20px; margin-bottom: 20px", :href => "/psms/aggregateview"} View PSMs
-%a.btn.btn-default.pull-right{:style=>"margin-left: 20px; margin-bottom: 20px", :href => "/modification/list"} View Modifications
+%div#spectruminformation
+    %table.table.table-striped.table-condensed.tablesorter
+        %tr
+            %td{:style=>"vertical-align:middle"}= "Peptides"
+            %td{:style=>"vertical-align:middle"}= Peptide.count
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"", :href => "/peptide/aggregateview"} View Peptides
+        %tr
+            %td{:style=>"vertical-align:middle"}= "PSMs"
+            %td{:style=>"vertical-align:middle"}= Peptidespectrummatch.count
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"", :href => "/psms/aggregateview"} View PSMs
+        %tr
+            %td{:style=>"vertical-align:middle"}= "Protein"
+            %td{:style=>"vertical-align:middle"}= Protein.count
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"", :href => "/protein/aggregateview"} View Proteins
+        %tr
+            %td{:style=>"vertical-align:middle"}= "Modifications"
+            %td{:style=>"vertical-align:middle"}= Modification.count
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"", :href => "/modification/list"} View Modifications
+        %tr
+            %td{:style=>"vertical-align:middle"}= "Datasets"
+            %td{:style=>"vertical-align:middle"}= Dataset.count
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"", :href => "/dataset/aggregateview"} View Dataset
