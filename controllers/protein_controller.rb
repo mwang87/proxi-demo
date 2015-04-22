@@ -42,7 +42,7 @@ get '/protein/aggregateview' do
 
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
 
-    @all_proteins = Protein.all().map(&:name)
+    @all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
 
     #Actual Processing  

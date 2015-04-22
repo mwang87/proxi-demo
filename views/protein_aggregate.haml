@@ -16,7 +16,6 @@
     %input.btn.btn-default{:type => "submit", :value => "Update Proteins"} 
 
 
-
 %table.table.table-striped.table-condensed.tablesorter
     %thead
         %tr
@@ -39,7 +38,7 @@
             %td{:style=>"vertical-align:middle"}= protein.peptidespectrummatch.count
 
 :javascript
-    all_proteins = #{@all_proteins.to_json}
+    all_proteins = #{@all_proteins_autocomplete.to_json}
     all_modifications = #{@all_modifications.to_json}
 
     $(function() {

@@ -73,7 +73,7 @@ get '/psms/aggregateview' do
 
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
 
-    @all_proteins = Protein.all().map(&:name)
+    @all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
 
     #Actual Processing
@@ -112,6 +112,11 @@ get '/psms/aggregateview' do
     		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
+        @total_count = Peptidespectrummatch.count(
+            :peptide => peptides_db,
+            :protein => protein_db,
+            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
+
         return haml :psms_aggregate
     end
 
@@ -121,6 +126,10 @@ get '/psms/aggregateview' do
     		:protein => protein_db,
     		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
+
+        @total_count = Peptidespectrummatch.count(
+            :peptide => peptides_db,
+            :protein => protein_db)
 
         return haml :psms_aggregate
     end
@@ -133,6 +142,10 @@ get '/psms/aggregateview' do
     		:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
         
+        @total_count = Peptidespectrummatch.count(
+            :peptide => peptides_db,
+            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
+
         return haml :psms_aggregate
     end
 
@@ -143,6 +156,10 @@ get '/psms/aggregateview' do
     		:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
+
+        @total_count = Peptidespectrummatch.count(
+            :protein => protein_db,
+            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
 
         return haml :psms_aggregate
     end
@@ -162,6 +179,10 @@ get '/psms/aggregateview' do
         	:peptide => peptides_db,
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
+
+        @total_count = Peptidespectrummatch.count(
+            :peptide => peptides_db)
+
         return haml :psms_aggregate
     end
 
@@ -172,12 +193,17 @@ get '/psms/aggregateview' do
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
+        @total_count = Peptidespectrummatch.count(
+            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
+
         return haml :psms_aggregate
     end
 
     @psms = Peptidespectrummatch.all(
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
+
+    @total_count = Peptidespectrummatch.count
 
     return haml :psms_aggregate
 end
