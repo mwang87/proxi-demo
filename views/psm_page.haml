@@ -1,8 +1,11 @@
 %div#spectruminformation
     %table.table.table-striped.table-condensed.tablesorter
         %tr
+            %td{:style=>"vertical-align:middle"}= "Sequence"
+            %td{:style=>"vertical-align:middle"}= @psm.sequence
+        %tr
             %td{:style=>"vertical-align:middle"}= "Peptide"
-            %td{:style=>"vertical-align:middle"}= @psm.variant.sequence
+            %td{:style=>"vertical-align:middle"}= @psm.peptide.sequence
         %tr
             %td{:style=>"vertical-align:middle"}= "Dataset"
             %td{:style=>"vertical-align:middle"}= @psm.dataset.name

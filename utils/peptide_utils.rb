@@ -1,10 +1,11 @@
 
 
-def get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tab_file, scan_number, filename)   
+def get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tab_file, scan_number, filename, sequence)   
     psm = Peptidespectrummatch.first_or_create(
         :filename => filename, 
         :scan => scan_number, 
         :tabfile => tab_file, 
+        :sequence => sequence,
         :variant => variant_db,
         :dataset => dataset_db,
         :peptide => peptide_db, 

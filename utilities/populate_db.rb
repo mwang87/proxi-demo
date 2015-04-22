@@ -70,13 +70,11 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
             modifications_list = modification_string.split(',')
         end
 	
-        variant_db, peptide_db = get_create_peptide(peptide, dataset_db, protein_db)
-        psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file)
+
+        
+        peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
+        psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, peptide)
         get_create_modification(modifications_list, peptide_db, variant_db, dataset_db, protein_db, psm_db)
-
-        #datset_peptide_db, dataset_variant_db = create_dataset_peptide_link(variant_db, peptide_db, dataset_db)
-        #
-
         
     }
 end

@@ -137,6 +137,7 @@ class Peptidespectrummatch
     property :filename,         String
     property :scan,             String
     property :tabfile,          String
+    property :sequence,         String
 
     belongs_to :peptide
     belongs_to :variant
