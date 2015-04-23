@@ -188,7 +188,9 @@ get '/psms/aggregateview' do
         	:offset => (page_number - 1) * PAGINATION_SIZE, 
         	:limit => PAGINATION_SIZE)
 
-        puts @psms
+    	@total_count = Peptidespectrummatch.count(
+            :protein => protein_db)
+
         return haml :psms_aggregate
     end
 
