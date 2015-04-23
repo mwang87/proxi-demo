@@ -76,6 +76,12 @@ get '/protein/aggregateview' do
             :name => protein,
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
+
+        @total_count = Protein.count(
+            :modificationprotein => ModificationProtein.all(:modification => mod_db),
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
+            :name => protein);
+
         return haml :protein_aggregate
     end
 
@@ -85,6 +91,11 @@ get '/protein/aggregateview' do
             :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
+
+        @total_count = Protein.count(
+            :modificationprotein => ModificationProtein.all(:modification => mod_db),
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide));
+
         return haml :protein_aggregate
     end
 
@@ -94,6 +105,11 @@ get '/protein/aggregateview' do
             :name => protein,
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
+
+        @total_count = Protein.count(
+            :modificationprotein => ModificationProtein.all(:modification => mod_db),
+            :name => protein);
+
         return haml :protein_aggregate
     end
 
@@ -103,6 +119,11 @@ get '/protein/aggregateview' do
             :name => protein,
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
+
+        @total_count = Protein.count(
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
+            :name => protein);
+
         return haml :protein_aggregate
     end
 
@@ -110,6 +131,9 @@ get '/protein/aggregateview' do
         @all_proteins = Protein.all(:modificationprotein => ModificationProtein.all(:modification => mod_db),
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
+
+        @total_count = Protein.count(
+            :modificationprotein => ModificationProtein.all(:modification => mod_db));
 
         return haml :protein_aggregate
     end
@@ -123,6 +147,9 @@ get '/protein/aggregateview' do
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
 
+        @total_count = Protein.count(
+            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide));
+
         return haml :protein_aggregate
     end
 
@@ -130,6 +157,9 @@ get '/protein/aggregateview' do
         @all_proteins = Protein.all(:name => protein,
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
+
+        @total_count = Protein.count(
+            :name => protein);
 
         return haml :protein_aggregate
     end
@@ -140,6 +170,8 @@ get '/protein/aggregateview' do
     @all_proteins = Protein.all(
             :offset => (page_number - 1) * PAGINATION_SIZE, 
             :limit => PAGINATION_SIZE)
+
+    @total_count = Protein.count
 
     return haml :protein_aggregate
 

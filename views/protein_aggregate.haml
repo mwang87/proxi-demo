@@ -3,6 +3,11 @@
 - if @previous_page != nil
     %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}"} Prev Page
 
+%br
+%div
+    #{@total_count} Results
+%br
+
 %form{:action => "/protein/aggregateview", :method => "get"}
     .form-group
         %label{:for => "name"} Peptide
