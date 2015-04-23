@@ -7,14 +7,19 @@
     %thead
         %tr
             %th
-            %th Mod Name Name
+            %th
+            %th
+            %th
+            %th Mod Name
     - @all_modifications.each do |modification|
         %tr
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/#{modification.id}/dataset/list"} View Datasets
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/dataset/aggregateview?mod=#{modification.name}"} View Datasets
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/#{modification.id}/peptide/list"} View Peptides
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/peptide/aggregateview?mod=#{modification.name}"} View Peptides
             %td
-                %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "/modification/#{modification.id}/psm/list"} View PSMs
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/psms/aggregateview?mod=#{modification.name}"} View PSMs
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/protein/aggregateview?mod=#{modification.name}"} View Proteins
             %td{:style=>"vertical-align:middle"}= modification.name
 
