@@ -27,8 +27,8 @@ def get_create_peptide(peptide_sequence, dataset_db, protein_db)
     return peptide_db, variant_db
 end
 
-def get_create_dataset(dataset_name)
-    dataset_object = Dataset.first_or_create(:name => dataset_name)
+def get_create_dataset(dataset_name, task_id)
+    dataset_object = Dataset.first_or_create(:name => dataset_name, :task_id => task_id)
     dataset_object.save
     return dataset_object
 end

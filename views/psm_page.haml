@@ -1,3 +1,14 @@
+%script{:src=>"/lorikeet/js/jquery.flot.js"}
+%script{:src=>"/lorikeet/js/jquery.flot.selection.js"}
+%script{:src=>"/lorikeet/js/specview.js"}
+%script{:src=>"/lorikeet/js/peptide.js"}
+%script{:src=>"/lorikeet/js/aminoacid.js"}
+%script{:src=>"/lorikeet/js/ion.js"}
+
+%link{:href=>"/lorikeet/css/lorikeet.css", :rel=>"stylesheet"}
+
+
+
 %div#spectruminformation
     %table.table.table-striped.table-condensed.tablesorter
         %tr
@@ -21,3 +32,151 @@
         %tr
             %td{:style=>"vertical-align:middle"}= "Tab File"
             %td{:style=>"vertical-align:middle"}= @psm.tabfile
+
+
+%div#lorikeetpanel
+    
+
+
+
+:javascript
+    remote_url = "#{@remote_peaks_url}"
+    peptide_string = "#{@psm.sequence}"
+    $(document).ready( function() {
+        $.ajax({
+            url: remote_url,
+            jsonp: "callback",
+            async: false,
+            dataType: "jsonp",
+            success: function(){
+                return function(response){
+                    console.log(response)
+                    modification_struct = get_peptide_modification_list_inspect_format(peptide_string)
+                    stripped_peptide = modification_struct.render_peptide
+                    all_modifications = modification_struct.all_modifications
+                    nterm_mod_mass = modification_struct.nterm_mod_mass
+
+                    peaks = parseSpecplotPeaksToArray(response.data)
+
+                    $("#lorikeetpanel").specview( {
+                        sequence: stripped_peptide, 
+                        peaks: peaks,
+                        labelImmoniumIons: false,
+                        width:500,
+                        height:500,
+                        showOptionsTable:true,
+                        showIonTable:true,
+                        showSequenceInfo:true,
+                        variableMods: all_modifications,
+                        ntermMod: nterm_mod_mass,
+                        zoomType: "xy"
+                    })
+                }
+            }()
+        })
+    });
+
+    function get_peptide_modification_list_inspect_format(peptide){
+        return_value = new Object()
+        
+        render_peptide = ""
+        if(peptide != null){
+            if(peptide.length > 5){
+                //Cleaning up Peptide
+                render_peptide = peptide
+                if(peptide.indexOf(".") == 1){
+                    render_peptide = peptide.substring(2, peptide.length - 2);
+                }
+            }
+        }
+        
+        //Getting the mods from the specnets string
+        //count number of mods
+        //number_of_mods = (render_peptide.match(/\+/g) || render_peptide.match(/\-/g) || []).length;
+        number_of_mods = 0
+        for(i = 0; i < peptide.length; i++){
+            if(peptide[i] == "+" || peptide[i] == "-"){
+                number_of_mods++;
+            }
+        }
+        
+        all_modifications = []
+        nterm_mod_mass = 0.0
+        for(i = 0; i < number_of_mods; i++){
+            mod_start_plus = render_peptide.indexOf("+") - 1
+            mod_start_minus = render_peptide.indexOf("-") - 1
+            
+            mod_start = mod_start_plus
+            
+            if(mod_start_plus == -2){
+                mod_start = mod_start_minus
+            }
+            
+            if(mod_start_minus != -2 && mod_start_minus < mod_start_plus){
+                mod_start = mod_start_minus
+            }
+            
+            
+            
+            
+            mod_end = render_peptide.length
+            for(k = mod_start+1; k < render_peptide.length; k++){
+                if(render_peptide[k].match(/[A-Z]/i) != null){
+                    mod_end = k
+                    break
+                }
+            }
+            
+            if(mod_start == -1){
+                //nterm mod
+                mod_mass_start = mod_start + 1
+                nterm_mod_mass = parseFloat(render_peptide.slice(mod_mass_start, mod_end))
+                render_peptide = render_peptide.slice(mod_end)
+                continue;
+            }
+            
+            mod_mass_start = mod_start + 1
+            mod_aminoacid = render_peptide[mod_start]
+            mod_mass = parseFloat(render_peptide.slice(mod_mass_start, mod_end))
+            all_modifications.push({index:mod_start+1, modMass:mod_mass, aminoAcid: mod_aminoacid});
+            render_peptide = render_peptide.slice(0, mod_start) + mod_aminoacid + render_peptide.slice(mod_end)
+        }
+        
+        return_value.render_peptide = render_peptide
+        return_value.all_modifications = all_modifications
+        return_value.nterm_mod_mass = nterm_mod_mass
+        
+        return return_value
+    }
+
+    function parseSpecplotPeaksToArray(specplot_raw_text){
+        lines = specplot_raw_text.split("\n")
+        spectrum_peaks = []
+        for(var i in lines){
+            if(i > 7){
+                splits = lines[i].split(" ")
+                mass = parseFloat(splits[0])
+                intensity = Number.NaN;
+                //intensity = parseFloat(splits[splits.length-1])
+                
+                for(k = 1; k < splits.length; k++){
+                    if(splits[k].length > 0){
+                        intensity = parseFloat(splits[k])
+                        break;
+                    }
+                }
+                
+                if(isNaN(mass) || isNaN(intensity)){
+                    continue
+                }
+                
+                if(intensity < 0.1){
+                    continue
+                }
+                
+                mass_int_pair = [mass, intensity]
+                spectrum_peaks.push(mass_int_pair)
+            }
+        }
+        return spectrum_peaks
+    }

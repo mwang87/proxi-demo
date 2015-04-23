@@ -19,6 +19,7 @@ class Dataset
     include DataMapper::Resource
     property :id,               Serial
     property :name,             String
+    property :task_id,          String
 
     has n, :peptides, :through => :datasetpeptide
     has n, :proteins, :through => :datasetprotein

@@ -1,5 +1,23 @@
+require 'rack'
+
 get '/psm/:psmid' do
 	@psm = Peptidespectrummatch.first(:id => params[:psmid])
+
+	remote_server_url = "http://massive.ucsd.edu" + "/ProteoSAFe/DownloadResultFile?"
+	
+
+	parameters_string = Rack::Utils.build_query({   :invoke => "annotatedSpectrumImageText", 
+		:task => @psm.dataset.task_id,
+		:block => "0",
+		:file => "FILE->peak/" + @psm.filename,
+		:scan => @psm.scan,
+		:peptide => "*..*",
+		:dataset => @psm.dataset.name,
+		:jsonp => "1"})
+	
+	@remote_peaks_url = remote_server_url + parameters_string
+
+
 
 	haml :psm_page
 end

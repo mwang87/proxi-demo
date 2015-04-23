@@ -50,7 +50,7 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     puts "Parsing Tab: " + tsv_id + " with " + tab_data.length.to_s + " entries "
     
     psm_count = 0
-    dataset_db = get_create_dataset(dataset_id)
+    dataset_db = get_create_dataset(dataset_id, task_id)
     
     tab_data.each{ |psm_object|
         psm_count += 1
@@ -70,7 +70,6 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
             modifications_list = modification_string.split(',')
         end
 	
-
         
         peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
         psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, peptide)
