@@ -23,9 +23,6 @@ require './utils/protein_utils'
 require './utils/peptide_utils'
 
 get '/' do
-    @all_proteins = Protein.all().map(&:name)
-    @all_modifications = Modification.all().map(&:name)
-
     haml :homepage
 end
 
