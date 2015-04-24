@@ -158,6 +158,10 @@ get '/psms/aggregateview' do
     @psms = Peptidespectrummatch.all(query_parameters)
     @total_count = Peptidespectrummatch.count(count_parameters)
 
+    if (@next_page - 1) * PAGINATION_SIZE > @total_count
+        @next_page = nil
+    end
+
     return haml :psms_aggregate
 
 end
