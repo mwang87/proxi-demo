@@ -28,8 +28,8 @@
             %th 
                 scan
                 %div.btn-group{:role => "group"}
-                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down"}
-                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up"}
+                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down&sorttype=scan"}
+                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=scan"}
             %th sequence
             %th protein
             %th dataset
