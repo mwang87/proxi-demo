@@ -83,12 +83,21 @@ get '/peptide/aggregateview' do
         modification = ""
     end
 
+    if sort_direction == nil
+        sort_direction = ""
+    end
+
+    if sort_type == nil
+        sort_type = ""
+    end
+
     #Web Rendering Code
     @protein_input = protein
     @peptide_input = peptide
     @modification_input = modification
 
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+    @sort_string = "&sort=" + sort_direction + "&sorttype=" + sort_type
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
