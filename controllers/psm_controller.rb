@@ -106,126 +106,37 @@ get '/psms/aggregateview' do
     protein_db = nil
     mod_db = nil
 
+    query_parameters = Hash.new
+    query_parameters[:offset]  = (page_number - 1) * PAGINATION_SIZE
+    query_parameters[:limit]  = PAGINATION_SIZE
+
+    count_parameters = Hash.new
+
     if protein.length > 2
         filter_protein = true
         protein_db = Protein.first(:name => protein)
+        query_parameters[:protein] = protein_db
+        count_parameters[:protein] = protein_db
     end
 
     if peptide.length > 2
         filter_peptide = true
         query_peptide = "%" + peptide + "%"
         peptides_db = Peptide.all(:sequence.like => query_peptide)
+        query_parameters[:peptide] = peptides_db
+        count_parameters[:peptide] = peptides_db
     end
 
     if modification.length > 2
         filter_mod = true
         mod_db = Modification.first(:name => modification)
+        query_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
+        count_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
     end
 
-    #Now we do a big switch statement
-    if filter_protein and filter_peptide and filter_mod
-        @psms = Peptidespectrummatch.all(
-    		:peptide => peptides_db,
-    		:protein => protein_db,
-    		:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
-    		:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-
-        @total_count = Peptidespectrummatch.count(
-            :peptide => peptides_db,
-            :protein => protein_db,
-            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
-
-        return haml :psms_aggregate
-    end
-
-    if filter_protein and filter_peptide
-        @psms = Peptidespectrummatch.all(
-    		:peptide => peptides_db,
-    		:protein => protein_db,
-    		:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-
-        @total_count = Peptidespectrummatch.count(
-            :peptide => peptides_db,
-            :protein => protein_db)
-
-        return haml :psms_aggregate
-    end
-
-    if filter_peptide and filter_mod
-    	#likely need to write custom sql to optimize, TODO
-    	@psms = Peptidespectrummatch.all(
-    		:peptide => peptides_db,
-    		:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
-    		:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-        
-        @total_count = Peptidespectrummatch.count(
-            :peptide => peptides_db,
-            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
-
-        return haml :psms_aggregate
-    end
-
-    if filter_protein and filter_mod
-    	#likely need to write custom sql to optimize, TODO
-    	@psms = Peptidespectrummatch.all(
-    		:protein => protein_db,
-    		:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-
-        @total_count = Peptidespectrummatch.count(
-            :protein => protein_db,
-            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
-
-        return haml :psms_aggregate
-    end
-
-    if filter_protein
-        @psms = Peptidespectrummatch.all(
-        	:protein => protein_db,
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-
-    	@total_count = Peptidespectrummatch.count(
-            :protein => protein_db)
-
-        return haml :psms_aggregate
-    end
-
-    if filter_peptide
-        @psms = Peptidespectrummatch.all(
-        	:peptide => peptides_db,
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-
-        @total_count = Peptidespectrummatch.count(
-            :peptide => peptides_db)
-
-        return haml :psms_aggregate
-    end
-
-    if filter_mod
-    	#likely need to write custom sql to optimize, TODO
-        @psms = Peptidespectrummatch.all(
-        	:modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db),
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-
-        @total_count = Peptidespectrummatch.count(
-            :modificationpeptidespectrummatch => ModificationPeptidespectrummatch.all(:modification => mod_db))
-
-        return haml :psms_aggregate
-    end
-
-    @psms = Peptidespectrummatch.all(
-        	:offset => (page_number - 1) * PAGINATION_SIZE, 
-        	:limit => PAGINATION_SIZE)
-
-    @total_count = Peptidespectrummatch.count
+    @psms = Peptidespectrummatch.all(query_parameters)
+    @total_count = Peptidespectrummatch.count(count_parameters)
 
     return haml :psms_aggregate
-end
 
+end

@@ -27,10 +27,11 @@
             %th
             %th 
                 scan
+            %th
+                sequence
                 %div.btn-group{:role => "group"}
-                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down&sorttype=scan"}
-                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=scan"}
-            %th sequence
+                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down&sorttype=sequence"}
+                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=sequence"}
             %th protein
             %th dataset
     - @psms.each do |psm|
