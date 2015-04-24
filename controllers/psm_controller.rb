@@ -73,6 +73,9 @@ get '/psms/aggregateview' do
     peptide = params[:peptide]
     modification = params[:mod]
 
+    sort_direction = params[:sort]
+    sort_type = params[:sorttype]
+
     if protein == nil
         protein = ""
     end
@@ -96,7 +99,6 @@ get '/psms/aggregateview' do
     @all_modifications = Modification.all().map(&:name)
 
     #Actual Processing
-
     filter_protein = false
     filter_peptide = false
     filter_mod = false
@@ -132,6 +134,15 @@ get '/psms/aggregateview' do
         mod_db = Modification.first(:name => modification)
         query_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
         count_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
+    end
+
+    #Determining the sorting direction and for what field
+    if sort_type == "sequence"
+        if sort_direction == "up"
+            query_parameters[:order] = [:sequence.desc]
+        else
+            query_parameters[:order] = [:sequence.asc]
+        end
     end
 
     @psms = Peptidespectrummatch.all(query_parameters)
