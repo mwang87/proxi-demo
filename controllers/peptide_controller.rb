@@ -150,12 +150,12 @@ get '/peptide/aggregateview' do
         end
     end
 
+    @all_peptides = Peptide.all(query_parameters)
+    @total_count = Peptide.count(count_parameters)
+
     if (@next_page - 1) * PAGINATION_SIZE > @total_count
         @next_page = nil
     end
-
-    @all_peptides = Peptide.all(query_parameters)
-    @total_count = Peptide.count(count_parameters)
 
     return haml :peptide_aggregate
 
