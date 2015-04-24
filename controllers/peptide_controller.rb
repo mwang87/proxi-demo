@@ -120,16 +120,8 @@ get '/peptide/aggregateview' do
 
     #Now we do a big switch statement
     if filter_protein and filter_peptide and filter_mod
-        @all_peptides = peptides_db.all(
-            :peptideprotein => PeptideProtein.all(:protein => protein_db),
-            :modificationpeptide => {:modification => mod_db},
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-        @total_count = peptides_db.count(
-            :peptideprotein => PeptideProtein.count(:protein => protein_db),
-            :modificationpeptide => {:modification => mod_db});
-
+        @all_peptides, @total_count = peptide_query_for_peptide_protein_mod(protein, 
+            modification, peptide, page_number)
 
         return haml :peptide_aggregate
     end
@@ -217,3 +209,22 @@ get '/peptide/aggregateview' do
     return haml :peptide_aggregate
 end
 
+#Returns the query result and the counts of the total result set
+def peptide_query_for_peptide_protein_mod(protein, mod, peptide, page_number)
+    protein_db = Protein.first(:name => protein)
+    mod_db = Modification.first(:name => mod)
+
+    all_peptides = Peptide.all(
+            :peptideprotein => PeptideProtein.all(:protein => protein_db),
+            :modificationpeptide => {:modification => mod_db},
+            :sequence => peptide,
+            :offset => (page_number - 1) * PAGINATION_SIZE, 
+            :limit => PAGINATION_SIZE)
+
+    total_count = Peptide.count(
+        :peptideprotein => PeptideProtein.count(:protein => protein_db),
+        :modificationpeptide => {:modification => mod_db},
+        :sequence => peptide);
+
+    return all_peptides, total_count
+end
