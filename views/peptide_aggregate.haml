@@ -27,7 +27,11 @@
             %th
             %th
             %th
-            %th Sequence
+            %th 
+                Sequence
+                %div.btn-group{:role => "group"}
+                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down&sorttype=sequence"}
+                    %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=sequence"}
             %th PSM Count
     - @all_peptides.each do |peptide|
         %tr
