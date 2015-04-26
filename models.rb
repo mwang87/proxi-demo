@@ -64,6 +64,10 @@ class Modification
     include DataMapper::Resource
     property :id,               Serial
     property :name,             String
+
+    has n, :proteins, :through => :modificationprotein
+    has n, :peptides, :through => :modificationpeptide
+
 end
 
 class ModificationPeptide

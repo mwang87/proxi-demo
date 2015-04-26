@@ -1,0 +1,57 @@
+- if @next_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@next_page}#{@sort_string}"} Next Page
+- if @previous_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}#{@sort_string}"} Prev Page
+
+%br
+%div
+    #{@total_count} Results
+%br
+
+%form{:action => "/modification/aggregateview", :method => "get"}
+    .form-group
+        %label{:for => "name"} Peptide
+        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => "#{@peptide_input}"}
+        %p
+        %label{:for => "aboutme"} Protein
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "#{@protein_input}", :class => "dataset_protein_input"}
+        %p
+        %label{:for => "aboutme"} Modification
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "#{@modification_input}", :class => "dataset_mod_input"}
+    %input.btn.btn-default{:type => "submit", :value => "Update Modifications"} 
+
+
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th
+            %th
+            %th
+            %th 
+            %th Modification Name
+    - @all_modifications_display.each do |modification|
+        %tr
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/dataset/aggregateview?mod=#{modification.name}"} View Datasets
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/peptide/aggregateview?mod=#{modification.name}"} View Peptides
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/psms/aggregateview?mod=#{modification.name}"} View PSMs
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/protein/aggregateview?mod=#{modification.name}"} View Proteins
+            %td{:style=>"vertical-align:middle"}= modification.name
+
+
+:javascript
+    all_proteins = #{@all_proteins_autocomplete.to_json}
+    all_modifications = #{@all_modifications.to_json}
+
+    $(function() {
+        $( ".dataset_mod_input" ).autocomplete({
+          source: all_modifications
+        });
+        $( ".dataset_protein_input" ).autocomplete({
+          source: all_proteins
+        });
+    });
+
