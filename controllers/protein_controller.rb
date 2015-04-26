@@ -18,10 +18,14 @@ end
 #Aggregate View
 get '/protein/aggregateview' do
     page_number, @previous_page, @next_page = page_prev_next_utilties(params)
+    @page_number = page_number
 
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
+
+    sort_direction = params[:sort]
+    sort_type = params[:sorttype]
 
     if protein == nil
         protein = ""
@@ -35,12 +39,21 @@ get '/protein/aggregateview' do
         modification = ""
     end
 
+    if sort_direction == nil
+        sort_direction = ""
+    end
+
+    if sort_type == nil
+        sort_type = ""
+    end
+
     #Web Rendering Code
     @protein_input = protein
     @peptide_input = peptide
     @modification_input = modification
 
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+    @sort_string = "&sort=" + sort_direction + "&sorttype=" + sort_type
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
@@ -78,6 +91,15 @@ get '/protein/aggregateview' do
         mod_db = Modification.first(:name => modification)
         query_parameters[:modificationprotein] = ModificationProtein.all(:modification => mod_db)
         count_parameters[:modificationprotein] = ModificationProtein.all(:modification => mod_db)
+    end
+
+    #Determining the sorting direction and for what field
+    if sort_type == "protein"
+        if sort_direction == "up"
+            query_parameters[:order] = [:name.desc]
+        else
+            query_parameters[:order] = [:name.asc]
+        end
     end
 
     @all_proteins = Protein.all(query_parameters)
