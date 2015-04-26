@@ -120,102 +120,43 @@ get '/dataset/aggregateview' do
     protein_db = nil
     mod_db = nil
 
+    query_parameters = Hash.new
+    query_parameters[:offset]  = (page_number - 1) * PAGINATION_SIZE
+    query_parameters[:limit]  = PAGINATION_SIZE
+
+    count_parameters = Hash.new
+
     if protein.length > 2
         filter_protein = true
         protein_db = Protein.first(:name => protein)
+        query_parameters[:datasetprotein] = DatasetProtein.all(:protein => protein_db)
+        count_parameters[:datasetprotein] = DatasetProtein.all(:protein => protein_db)
     end
 
     if peptide.length > 2
         filter_peptide = true
         query_peptide = "%" + peptide + "%"
         peptide_db = Peptide.first(:sequence.like => query_peptide)
+        query_parameters[:datasetpeptide] = DatasetPeptide.all(:peptide => peptide_db)
+        count_parameters[:datasetpeptide] = DatasetPeptide.all(:peptide => peptide_db)
     end
 
     if modification.length > 2
         filter_mod = true
         mod_db = Modification.first(:name => modification)
+        query_parameters[:datasetmodification] = DatasetModification.all(:modification => mod_db)
+        count_parameters[:datasetmodification] = DatasetModification.all(:modification => mod_db)
     end
 
-    #Now we do a big switch statement
-    if filter_protein and filter_peptide and filter_mod
-        @datasets = Dataset.all(
-            :datasetpeptide => DatasetPeptide.all(:peptide => peptide_db),
-            :datasetprotein => DatasetProtein.all(:protein => protein_db),
-            :datasetmodification => DatasetModification.all(:modification => mod_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE
-            )
+    @datasets = Dataset.all(query_parameters)
+    @total_count = Dataset.count(count_parameters)
 
-        return haml :dataset_aggregate
+    if (@next_page - 1) * PAGINATION_SIZE > @total_count
+        @next_page = nil
     end
-
-    if filter_peptide and filter_mod
-        @datasets = Dataset.all(
-            :datasetpeptide => DatasetPeptide.all(:peptide => peptide_db),
-            :datasetmodification => DatasetModification.all(:modification => mod_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE
-            )
-
-        return haml :dataset_aggregate
-    end
-
-    if filter_protein and filter_mod
-        @datasets = Dataset.all(
-            :datasetprotein => DatasetProtein.all(:protein => protein_db),
-            :datasetmodification => DatasetModification.all(:modification => mod_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE
-            )
-
-        return haml :dataset_aggregate
-    end
-
-    if filter_protein and filter_peptide
-        @datasets = Dataset.all(
-            :datasetpeptide => DatasetPeptide.all(:peptide => peptide_db),
-            :datasetprotein => DatasetProtein.all(:protein => protein_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE
-            )
-
-        return haml :dataset_aggregate
-    end
-
-    if filter_protein
-        @datasets = Dataset.all(
-            :datasetprotein => DatasetProtein.all(:protein => protein_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE
-            )
-
-        return haml :dataset_aggregate
-    end
-
-    if filter_peptide
-        @datasets = Dataset.all(
-            :datasetpeptide => DatasetPeptide.all(:peptide => peptide_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE
-            )
-
-        return haml :dataset_aggregate
-    end
-
-    if filter_mod
-        @datasets = Dataset.all(
-            :datasetmodification => DatasetModification.all(:modification => mod_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE
-            )
-
-        return haml :dataset_aggregate
-    end
-
-    @datasets = Dataset.all(:offset => (page_number - 1) * PAGINATION_SIZE , 
-            :limit => PAGINATION_SIZE)
 
     return haml :dataset_aggregate
+
 end
 
 

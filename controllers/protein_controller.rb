@@ -54,127 +54,40 @@ get '/protein/aggregateview' do
     query_peptide = ""
     mod_db = nil
 
+    query_parameters = Hash.new
+    query_parameters[:offset]  = (page_number - 1) * PAGINATION_SIZE
+    query_parameters[:limit]  = PAGINATION_SIZE
+
+    count_parameters = Hash.new
+
     if protein.length > 2
         filter_protein = true
+        query_parameters[:name] = protein
+        count_parameters[:name] = protein
     end
 
     if peptide.length > 2
         query_peptide = "%" + peptide + "%"
         filter_peptide = true
+        query_parameters[:peptideprotein] = PeptideProtein.all(:sequence.like => query_peptide)
+        count_parameters[:peptideprotein] = PeptideProtein.all(:sequence.like => query_peptide)
     end
 
     if modification.length > 2
         filter_mod = true
         mod_db = Modification.first(:name => modification)
+        query_parameters[:modificationprotein] = ModificationProtein.all(:modification => mod_db)
+        count_parameters[:modificationprotein] = ModificationProtein.all(:modification => mod_db)
     end
 
-    #Now we do a big switch statement
-    if filter_protein and filter_peptide and filter_mod
-        @all_proteins = Protein.all(
-            :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :name => protein,
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
+    @all_proteins = Protein.all(query_parameters)
+    @total_count = Protein.count(count_parameters)
 
-        @total_count = Protein.count(
-            :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :name => protein);
-
-        return haml :protein_aggregate
+    if (@next_page - 1) * PAGINATION_SIZE > @total_count
+        @next_page = nil
     end
-
-    if filter_peptide and filter_mod
-        @all_proteins = Protein.all(
-            :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-        @total_count = Protein.count(
-            :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide));
-
-        return haml :protein_aggregate
-    end
-
-    if filter_protein and filter_mod
-        @all_proteins = Protein.all(
-            :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :name => protein,
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-        @total_count = Protein.count(
-            :modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :name => protein);
-
-        return haml :protein_aggregate
-    end
-
-    if filter_protein and filter_peptide
-        @all_proteins = Protein.all(
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :name => protein,
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-        @total_count = Protein.count(
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :name => protein);
-
-        return haml :protein_aggregate
-    end
-
-    if filter_mod
-        @all_proteins = Protein.all(:modificationprotein => ModificationProtein.all(:modification => mod_db),
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-        @total_count = Protein.count(
-            :modificationprotein => ModificationProtein.all(:modification => mod_db));
-
-        return haml :protein_aggregate
-    end
-
-    if filter_peptide
-        #puts PeptideProtein.all(:sequence.like => query_peptide)
-        #puts "SEPARATOR"
-        #puts PeptideProtein.all(:unique => true, :fields => [:protein_id], :sequence.like => query_peptide)
-        #Likely need grouping for further optimization
-        @all_proteins = Protein.all(:peptideprotein => PeptideProtein.all(:sequence.like => query_peptide),
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-        @total_count = Protein.count(
-            :peptideprotein => PeptideProtein.all(:sequence.like => query_peptide));
-
-        return haml :protein_aggregate
-    end
-
-    if filter_protein
-        @all_proteins = Protein.all(:name => protein,
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-        @total_count = Protein.count(
-            :name => protein);
-
-        return haml :protein_aggregate
-    end
-
-    ##Need to optimize peptide proteins 
-
-
-    @all_proteins = Protein.all(
-            :offset => (page_number - 1) * PAGINATION_SIZE, 
-            :limit => PAGINATION_SIZE)
-
-    @total_count = Protein.count
 
     return haml :protein_aggregate
-
 end
 
 
