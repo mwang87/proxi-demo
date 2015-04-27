@@ -34,6 +34,7 @@
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=protein"}
             %th Peptide Counts
             %th PSM Counts
+            %th Mod Counts
     - @all_proteins.each do |protein|
         %tr
             %td
@@ -45,6 +46,7 @@
             %td{:style=>"vertical-align:middle"}= protein.name
             %td{:style=>"vertical-align:middle"}= protein.peptides.count
             %td{:style=>"vertical-align:middle"}= protein.peptidespectrummatch.count
+            %td{:style=>"vertical-align:middle"}= protein.modifications.count
 
 :javascript
     all_proteins = #{@all_proteins_autocomplete.to_json}
