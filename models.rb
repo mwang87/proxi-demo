@@ -44,14 +44,6 @@ class DatasetModification
     belongs_to :modification
 end
 
-class Protein
-    include DataMapper::Resource
-    property :id,               Serial
-    property :name,             String
-
-    has n, :modifications, :through => :modificationprotein
-end
-
 
 class PeptideProtein
     include DataMapper::Resource
