@@ -104,8 +104,8 @@ get '/dataset/aggregateview' do
     @peptide_input = peptide
     @modification_input = modification
 
-    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
-
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification)
+    
     #@all_proteins = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
 
@@ -154,6 +154,7 @@ get '/dataset/aggregateview' do
     if (@next_page - 1) * PAGINATION_SIZE > @total_count
         @next_page = nil
     end
+
 
     return haml :dataset_aggregate
 

@@ -37,11 +37,11 @@
     - @all_proteins.each do |protein|
         %tr
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/dataset/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{@modification_input}"} View Datasets
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/dataset/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{CGI.escape(@modification_input)}"} View Datasets
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/peptide/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{@modification_input}"} View Peptides
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/peptide/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{CGI.escape(@modification_input)}"} View Peptides
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{@modification_input}"} View PSMs
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{CGI.escape(@modification_input)}"} View PSMs
             %td{:style=>"vertical-align:middle"}= protein.name
             %td{:style=>"vertical-align:middle"}= protein.peptides.count
             %td{:style=>"vertical-align:middle"}= protein.peptidespectrummatch.count

@@ -32,13 +32,13 @@
     - @all_modifications_display.each do |modification|
         %tr
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/dataset/aggregateview?mod=#{modification.name}"} View Datasets
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/dataset/aggregateview?mod=#{CGI.escape(modification.name)}"} View Datasets
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/peptide/aggregateview?mod=#{modification.name}"} View Peptides
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/peptide/aggregateview?mod=#{CGI.escape(modification.name)}"} View Peptides
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/psms/aggregateview?mod=#{modification.name}"} View PSMs
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/psms/aggregateview?mod=#{CGI.escape(modification.name)}"} View PSMs
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/protein/aggregateview?mod=#{modification.name}"} View Proteins
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/protein/aggregateview?mod=#{CGI.escape(modification.name)}"} View Proteins
             %td{:style=>"vertical-align:middle"}= modification.name
 
 

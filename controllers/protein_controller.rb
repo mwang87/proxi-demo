@@ -52,7 +52,7 @@ get '/protein/aggregateview' do
     @peptide_input = peptide
     @modification_input = modification
 
-    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification)
     @sort_string = "&sort=" + sort_direction + "&sorttype=" + sort_type
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)

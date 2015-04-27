@@ -34,7 +34,7 @@ get '/modification/aggregateview' do
     @peptide_input = peptide
     @modification_input = modification
 
-    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification)
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
@@ -65,6 +65,7 @@ get '/modification/aggregateview' do
 
     @all_modifications_display = Modification.all(query_parameters)
     @total_count = Modification.count(count_parameters)
+
 
     haml :modification_aggregate
 end

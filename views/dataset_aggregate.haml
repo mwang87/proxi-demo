@@ -31,9 +31,9 @@
     - @datasets.each do |dataset|
         %tr
             %td{:style=>"vertical-align:middle"}= dataset.name
-            %td{:style=>"vertical-align:middle"}= dataset.proteins.count
-            %td{:style=>"vertical-align:middle"}= dataset.peptides.count
-            %td{:style=>"vertical-align:middle"}= dataset.peptidespectrummatch.count
+            %td{:style=>"vertical-align:middle"}= DatasetProtein.count(:dataset => dataset)
+            %td{:style=>"vertical-align:middle"}= DatasetPeptide.count(:dataset => dataset)
+            %td{:style=>"vertical-align:middle"}= Peptidespectrummatch.count(:dataset => dataset)
 
 
 

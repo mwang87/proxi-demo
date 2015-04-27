@@ -72,6 +72,7 @@ get '/psms/aggregateview' do
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
+    dataset_query = params[:dataset]
 
     sort_direction = params[:sort]
     sort_type = params[:sorttype]
@@ -88,6 +89,10 @@ get '/psms/aggregateview' do
         modification = ""
     end
 
+    if dataset_query == nil
+        dataset_query = ""
+    end
+
     if sort_direction == nil
         sort_direction = ""
     end
@@ -101,17 +106,15 @@ get '/psms/aggregateview' do
     @protein_input = protein
     @peptide_input = peptide
     @modification_input = modification
+    @dataset_input = dataset_query
 
-    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + modification
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification) + "&dataset=" + dataset_query
     @sort_string = "&sort=" + sort_direction + "&sorttype=" + sort_type
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
 
     #Actual Processing
-    filter_protein = false
-    filter_peptide = false
-    filter_mod = false
 
     #DB Fields
     peptides_db = nil
@@ -125,14 +128,12 @@ get '/psms/aggregateview' do
     count_parameters = Hash.new
 
     if protein.length > 2
-        filter_protein = true
         protein_db = Protein.first(:name => protein)
         query_parameters[:protein] = protein_db
         count_parameters[:protein] = protein_db
     end
 
     if peptide.length > 2
-        filter_peptide = true
         query_peptide = "%" + peptide + "%"
         peptides_db = Peptide.all(:sequence.like => query_peptide)
         query_parameters[:peptide] = peptides_db
@@ -140,10 +141,15 @@ get '/psms/aggregateview' do
     end
 
     if modification.length > 2
-        filter_mod = true
         mod_db = Modification.first(:name => modification)
         query_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
         count_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
+    end
+
+    if dataset_query.length > 2
+        dataset_db = Dataset.first(:name => dataset_query)
+        query_parameters[:dataset] = dataset_db
+        count_parameters[:dataset] = dataset_db
     end
 
     #Determining the sorting direction and for what field
