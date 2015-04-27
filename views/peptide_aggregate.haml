@@ -33,6 +33,7 @@
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down&sorttype=sequence"}
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=sequence"}
             %th PSM Count
+            %th Mod Count
     - @all_peptides.each do |peptide|
         %tr
             %td
@@ -43,6 +44,7 @@
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{peptide.sequence}&protein=#{@protein_input}&mod=#{CGI.escape(@modification_input)}"} View PSMs
             %td{:style=>"vertical-align:middle"}= peptide.sequence
             %td{:style=>"vertical-align:middle"}= peptide.peptidespectrummatch.count
+            %td{:style=>"vertical-align:middle"}= peptide.modifications.count
 
 
 :javascript
