@@ -27,6 +27,8 @@ def import_results_dataset(dataset_id)
     root_url = "http://massive.ucsd.edu"
     dataset_information = root_url + "/ProteoSAFe/MassiveServlet?massiveid=" + dataset_id + "&function=massiveinformation"
     puts dataset_information
+    ###SHOULD CHECK IF DATASET IS ALREADY IN THERE, IF SO, STOP
+
     result = http_get(dataset_information)
     #print result
     
