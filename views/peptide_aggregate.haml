@@ -34,6 +34,7 @@
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=sequence"}
             %th PSM Count
             %th Mod Count
+            %th Dataset Count
     - @all_peptides.each do |peptide|
         %tr
             %td
@@ -45,6 +46,7 @@
             %td{:style=>"vertical-align:middle"}= peptide.sequence
             %td{:style=>"vertical-align:middle"}= peptide.peptidespectrummatch.count
             %td{:style=>"vertical-align:middle"}= peptide.modifications.count
+            %td{:style=>"vertical-align:middle"}= peptide.datasets.count
 
 
 :javascript
