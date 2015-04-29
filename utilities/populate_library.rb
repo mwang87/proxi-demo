@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'json'
-require '../settings'
+require './populate_settings'
 require '../models'
 
 require '../utils/utils'
@@ -11,6 +11,8 @@ require '../utils/modification_utils'
 
 require 'net/http'
 
+DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/data.db")
+#DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/proxi-demo' )
 
 def http_get(url)
     url = URI.parse(url)
