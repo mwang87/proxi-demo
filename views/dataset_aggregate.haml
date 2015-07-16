@@ -33,7 +33,7 @@
         %tr
             %td{:style=>"vertical-align:middle"}= dataset.name
             %td
-                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&protein=#{@protein_input}&mod=#{CGI.escape(@modification_input)}&dataset=#{dataset.name}"} 
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&protein=#{@protein_input}&mod=#{CGI.escape(@modification_input)}&dataset=#{dataset.name}"} View PSMs
             %td{:style=>"vertical-align:middle"}= DatasetProtein.count(:dataset => dataset)
             %td{:style=>"vertical-align:middle"}= DatasetPeptide.count(:dataset => dataset)
             %td{:style=>"vertical-align:middle"}= 
