@@ -11,9 +11,6 @@ require '../utils/modification_utils'
 
 require 'net/http'
 
-DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/data.db")
-#DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/proxi-demo' )
-
 def http_get(url)
     url = URI.parse(url)
     req = Net::HTTP::Get.new(url.to_s)
@@ -43,6 +40,34 @@ def import_results_dataset(dataset_id)
 
     #Singly Threaded
     import_all_tab_files(tabs_list, dataset_id, task_id, root_url)
+
+    #Multiprocess
+    #import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
+end
+
+def import_results_task(task_id)
+    #Get task_id for dataset_id
+    #http://gnps.ucsd.edu/ProteoSAFe/MassiveServlet?massiveid=MSV000078711&function=massiveinformation
+    root_url = "http://proteomics2.ucsd.edu"
+
+    task_status_info = root_url + "/ProteoSAFe/status_json.jsp?task=" + task_id
+    puts task_status_info
+    task_information = JSON.parse(http_get(task_status_info))
+    task_description = task_information["description"]
+    task_workflow = task_information["workflow"]
+    puts task_description
+
+    #puts task_id
+    tab_list_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=view_result_list"
+    puts tab_list_url
+    
+    tabs_list = JSON.parse(http_get(tab_list_url))["blockData"]
+
+    task_label = task_workflow + " - " + task_id + " - " + task_description
+    puts task_label
+
+    #Singly Threaded
+    import_all_tab_files(tabs_list, task_label, task_id, root_url)
 
     #Multiprocess
     #import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
