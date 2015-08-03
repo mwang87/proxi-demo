@@ -85,6 +85,7 @@ end
 def import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
     max_parallelism = 2
     running_parallelism = 0
+    wait_seconds = 10
 
     tabs_list.each { |tab_object| 
         tab_file = tab_object["MzTab_file"]
@@ -105,6 +106,7 @@ def import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
             abort
         end
 
+        sleep(wait_seconds)
         if running_parallelism == max_parallelism
             Process.waitall
             running_parallelism = 0
@@ -116,7 +118,7 @@ end
 
 
 def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
-    tab_information_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=group_by_spectrum&file=" + tsv_id
+    tab_information_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=group_by_spectrum&file=" + tsv_id + "&show=true"
     tab_data = JSON.parse(http_get(tab_information_url))["blockData"]
 
     puts "Parsing Tab: " + tsv_id + " with " + tab_data.length.to_s + " entries "
