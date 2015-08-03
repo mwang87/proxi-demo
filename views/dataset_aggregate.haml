@@ -10,6 +10,9 @@
 
 %form{:action => "/dataset/aggregateview", :method => "get"}
     .form-group
+        %label{:for => "name"} Sequence
+        %input.form-control{:type => "text", :name => "sequence", :class => "text", :value => "#{@sequence_input}"}
+        %p
         %label{:for => "name"} Peptide
         %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => "#{@peptide_input}"}
         %p
