@@ -20,7 +20,7 @@
         %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "#{@modification_input}", :class => "dataset_mod_input"}
         %p
         %label{:for => "aboutme"} Dataset
-        %input.form-control{:type => "text", :name => "dataset", :class => "text", :value => "#{@dataset_input}", :class => "dataset_mod_input"}
+        %input.form-control{:type => "text", :name => "dataset", :class => "text", :value => "#{@dataset_input}", :class => "dataset_dataset_input"}
     %input.btn.btn-default{:type => "submit", :value => "Update PSMs"} 
 
 
@@ -51,6 +51,7 @@
 :javascript
     all_proteins = #{@all_proteins_autocomplete.to_json}
     all_modifications = #{@all_modifications.to_json}
+    all_datasets = #{@all_datasets.to_json}
 
     $(function() {
         $( ".dataset_mod_input" ).autocomplete({
@@ -59,5 +60,9 @@
         $( ".dataset_protein_input" ).autocomplete({
           source: all_proteins
         });
+        $( ".dataset_dataset_input" ).autocomplete({
+          source: all_datasets
+        });
+        
     });
 

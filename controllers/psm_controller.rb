@@ -1,68 +1,27 @@
 require 'rack'
 
+
 get '/psm/:psmid' do
-	@psm = Peptidespectrummatch.first(:id => params[:psmid])
+    @psm = Peptidespectrummatch.first(:id => params[:psmid])
 
-	remote_server_url = "http://massive.ucsd.edu" + "/ProteoSAFe/DownloadResultFile?"
-	
+    remote_server_url = "http://massive.ucsd.edu" + "/ProteoSAFe/DownloadResultFile?"
+    
 
-	parameters_string = Rack::Utils.build_query({   :invoke => "annotatedSpectrumImageText", 
-		:task => @psm.dataset.task_id,
-		:block => "0",
-		:file => "FILE->peak/" + @psm.filename,
-		:scan => @psm.scan,
-		:peptide => "*..*",
-		:dataset => @psm.dataset.name,
-		:jsonp => "1"})
-	
-	@remote_peaks_url = remote_server_url + parameters_string
+    parameters_string = Rack::Utils.build_query({   :invoke => "annotatedSpectrumImageText", 
+        :task => @psm.dataset.task_id,
+        :block => "0",
+        :file => "FILE->peak/" + @psm.filename,
+        :scan => @psm.scan,
+        :peptide => "*..*",
+        :dataset => @psm.dataset.name,
+        :jsonp => "1"})
+    
+    @remote_peaks_url = remote_server_url + parameters_string
 
 
 
-	haml :psm_page
+    haml :psm_page
 end
-
-
-get '/modification/:mod/psm/list' do
-	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-    mod_db = Modification.first(:id => params[:mod])
-
-    @psms = Datasetvariantspectrummatch.all(:DatasetVariant => DatasetVariant.all(:variant => mod_db.variants), :offset => (page_number - 1) * PAGINATION_SIZE, :limit => PAGINATION_SIZE)
-
-    haml :psms_all
-
-end
-
-get '/peptide/:peptide/psm/list' do
-	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-	peptide_db = Peptide.first(:sequence => params[:peptide])
-
-	@psms = Datasetvariantspectrummatch.all(
-		:DatasetVariant => DatasetVariant.all(:variant => peptide_db.variants), 
-		:offset => (page_number - 1) * PAGINATION_SIZE, 
-		:limit => PAGINATION_SIZE)	
-
-    haml :psms_all
-end
-
-
-get '/protein/:protein/psm/list' do
-	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-	protein_db = Protein.first(:id => params[:protein])
-
-	@psms = Datasetvariantspectrummatch.all(
-		:DatasetProtein => DatasetProtein.all(:protein => protein_db), 
-		:offset => (page_number - 1) * PAGINATION_SIZE, 
-		:limit => PAGINATION_SIZE)	
-
-    haml :psms_all
-end
-
-
-#Aggregate View
 
 #Aggregate View
 get '/psms/aggregateview' do
@@ -113,6 +72,7 @@ get '/psms/aggregateview' do
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
+    @all_datasets = Dataset.all().map(&:name)
 
     #Actual Processing
 
@@ -147,9 +107,24 @@ get '/psms/aggregateview' do
     end
 
     if dataset_query.length > 2
-        dataset_db = Dataset.first(:name => dataset_query)
-        query_parameters[:dataset] = dataset_db
-        count_parameters[:dataset] = dataset_db
+        #Pipes separate multiple queries
+        multi_dataset_query = dataset_query.split("|")
+        full_datasets_db = nil
+
+        multi_dataset_query.each { |each_dataset_query|
+            dataset_sql_query = "%" + each_dataset_query + "%"
+            dataset_db = Dataset.all(:name.like => dataset_sql_query)
+            puts dataset_db
+            if full_datasets_db == nil
+                full_datasets_db = dataset_db
+            else
+                full_datasets_db += dataset_db
+            end
+        }
+
+        
+        query_parameters[:dataset] = full_datasets_db
+        count_parameters[:dataset] = full_datasets_db
     end
 
     #Determining the sorting direction and for what field
