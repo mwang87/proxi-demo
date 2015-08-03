@@ -1,5 +1,3 @@
-### ZERO CONDITIONS
-
 
 get '/dataset/list' do
     page_number, @previous_page, @next_page = page_prev_next_utilties(params)
@@ -9,83 +7,19 @@ get '/dataset/list' do
     haml :dataset_all
 end
 
-### SINGLE CONDITIONS
-
-#Given a mod, give me the datasets that have supporting information
-get '/modification/:mod/dataset/list' do
-    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-    mod_db = Modification.first(:id => params[:mod])
-
-    dataset_variants = DatasetVariant.all(:variant => mod_db.variants)
-
-    @datasets =  dataset_variants.datasets
-
-    haml :dataset_plain_display
-end
-
-#Given a peptide, give me the datasets that have supporting information
-get '/peptide/:peptide/dataset/list' do
-    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-    peptide_db = Peptide.first(:sequence => params[:peptide])
-
-    dataset_peptide_db = peptide_db.DatasetPeptide
-    @datasets = Dataset.all(:DatasetPeptide => dataset_peptide_db)
-
-    haml :dataset_plain_display
-end
-
-get '/protein/:protein/dataset/list' do
-    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-    protein_db = Protein.first(:id => params[:protein])
-
-    @datasets =  protein_db.datasets
-
-    haml :dataset_plain_display
-end
-
-#DOUBLE CONDITIONS
-
-#Get Datasets that have peptide on this protein
-get '/protein/:protein/peptide/:peptide/dataset/list' do
-    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-    peptide_db = Peptide.first(:sequence => params[:peptide])
-    protein_db = Protein.first(:id => params[:protein])
-
-    dataset_peptide_db = peptide_db.DatasetPeptide
-    dataset_protein_db = protein_db.DatasetProtein
-    @datasets = Dataset.all(:DatasetPeptide => dataset_peptide_db, :DatasetProtein => dataset_protein_db)
-
-    haml :dataset_plain_display
-end
-
-
-get '/peptide/:peptide/modification/:mod/dataset/list' do
-    page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-    peptide_db = Peptide.first(:sequence => params[:peptide])
-    mod_db = Modification.first(:id => params[:mod])
-
-    dataset_variants_db = DatasetVariant.all(:variant => mod_db.variants)
-    dataset_peptide_db = peptide_db.DatasetPeptide
-
-    @datasets = Dataset.all(:DatasetPeptide => dataset_peptide_db, :DatasetVariant => dataset_variants_db)
-
-    haml :dataset_plain_display
-end
-
-
 
 #Aggregate View
 get '/dataset/aggregateview' do
     page_number, @previous_page, @next_page = page_prev_next_utilties(params)
 
+    sequence = params[:sequence]
     protein = params[:protein]
     peptide = params[:peptide]
     modification = params[:mod]
+
+    if sequence == nil
+        sequence = ""
+    end
 
     if protein == nil
         protein = ""
@@ -100,11 +34,12 @@ get '/dataset/aggregateview' do
     end
 
     #Web Rendering Code
+    @sequence_input = sequence
     @protein_input = protein
     @peptide_input = peptide
     @modification_input = modification
 
-    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification)
+    @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification) + "&sequence=" + sequence
     
     #@all_proteins = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
@@ -127,22 +62,26 @@ get '/dataset/aggregateview' do
     count_parameters = Hash.new
 
     if protein.length > 2
-        filter_protein = true
         protein_db = Protein.first(:name => protein)
         query_parameters[:datasetprotein] = DatasetProtein.all(:protein => protein_db)
         count_parameters[:datasetprotein] = DatasetProtein.all(:protein => protein_db)
     end
 
     if peptide.length > 2
-        filter_peptide = true
         query_peptide = "%" + peptide + "%"
-        peptide_db = Peptide.first(:sequence.like => query_peptide)
+        peptide_db = Peptide.all(:sequence.like => query_peptide)
         query_parameters[:datasetpeptide] = DatasetPeptide.all(:peptide => peptide_db)
         count_parameters[:datasetpeptide] = DatasetPeptide.all(:peptide => peptide_db)
     end
 
+    if sequence.length > 2
+        query_sequence = "%" + sequence + "%"
+        psm_db = Peptidespectrummatch.all(:sequence.like => query_sequence)
+        query_parameters[:peptidespectrummatch] = psm_db
+        count_parameters[:peptidespectrummatch] = psm_db
+    end
+
     if modification.length > 2
-        filter_mod = true
         mod_db = Modification.first(:name => modification)
         query_parameters[:datasetmodification] = DatasetModification.all(:modification => mod_db)
         count_parameters[:datasetmodification] = DatasetModification.all(:modification => mod_db)
@@ -157,32 +96,5 @@ get '/dataset/aggregateview' do
 
 
     return haml :dataset_aggregate
-
-end
-
-
-
-
-
-###OLD APIS
-
-
-
-get '/dataset/:datasetid/peptide/list' do
-	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-	@all_peptides = Dataset.first(:id => params[:datasetid]).basicpeptides(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
-	@datasetid = params[:datasetid]
-
-	haml :dataset_peptides
-end
-
-get '/dataset/:datasetid/protein/list' do
-	page_number, @previous_page, @next_page = page_prev_next_utilties(params)
-
-	@proteins = Dataset.first(:id => params[:datasetid]).proteins(:offset => (page_number - 1) * PAGINATION_SIZE , :limit => PAGINATION_SIZE)
-	@datasetid = params[:datasetid]
-
-	haml :dataset_proteins
 
 end
