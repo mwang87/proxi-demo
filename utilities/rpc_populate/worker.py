@@ -14,7 +14,7 @@ def test_run():
 def execute_task_populate(task_id):
     cmd = "ruby ../populate_db_task.rb " + task_id
     print cmd
-    #subprocess.call([cmd], shell=True)
+    subprocess.call([cmd], shell=True)
     
 if __name__ == '__main__':
     with Connection(conn):
