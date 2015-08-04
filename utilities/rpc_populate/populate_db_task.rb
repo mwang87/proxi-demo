@@ -1,1 +1,0 @@
-../populate_db_task.rb

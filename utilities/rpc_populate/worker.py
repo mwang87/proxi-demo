@@ -12,7 +12,8 @@ def test_run():
     return "MING"
 
 def execute_task_populate(task_id):
-    cmd = "ruby ../populate_db_task.rb " + task_id
+    print os.getcwd() 
+    cmd = "cd .. && ruby ./populate_db_task.rb " + task_id
     print cmd
     subprocess.call([cmd], shell=True)
     

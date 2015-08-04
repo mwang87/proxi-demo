@@ -1,1 +1,0 @@
-../populate_parallel_tab.rb
