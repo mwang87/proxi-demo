@@ -75,8 +75,8 @@ get '/protein/aggregateview' do
 
     if protein.length > 2
         filter_protein = true
-        query_parameters[:name] = protein
-        count_parameters[:name] = protein
+        query_parameters[:name.like] = "%" + protein + "%"
+        count_parameters[:name.like] = "%" + protein + "%"
     end
 
     if peptide.length > 2
