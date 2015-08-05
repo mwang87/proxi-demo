@@ -52,11 +52,18 @@ def get_results(job_key):
 @app.route('/run_job', methods=['POST'])
 def runjob():
     task_id = request.form["task_id"]
-    job = q.enqueue_call(
-        func=execute_task_populate, args=([task_id]), result_ttl=86000, timeout=3600
-    )
-    print(job.get_id())
-    return render_template('submission.html', job_id = job.get_id())
+
+    task_splits = task_id.split(" ")
+
+    for task_split in task_splits:
+        job = q.enqueue_call(
+            func=execute_task_populate, args=([task_split]), result_ttl=86000, timeout=3600
+        )
+        print task_split
+        print(job.get_id())
+
+    return str(task_splits)
+    #return render_template('submission.html', job_id = job.get_id())
 
 
 
