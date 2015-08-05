@@ -4,20 +4,37 @@ require 'rack'
 get '/psm/:psmid' do
     @psm = Peptidespectrummatch.first(:id => params[:psmid])
 
-    remote_server_url = "http://massive.ucsd.edu" + "/ProteoSAFe/DownloadResultFile?"
+    @remote_peaks_url = ""
+
+    if @psm.dataset.name.include? "MSV0000"
+        remote_server_url = "http://massive.ucsd.edu" + "/ProteoSAFe/DownloadResultFile?"
     
 
-    parameters_string = Rack::Utils.build_query({   :invoke => "annotatedSpectrumImageText", 
-        :task => @psm.dataset.task_id,
-        :block => "0",
-        :file => "FILE->peak/" + @psm.filename,
-        :scan => @psm.scan,
-        :peptide => "*..*",
-        :dataset => @psm.dataset.name,
-        :jsonp => "1"})
+        parameters_string = Rack::Utils.build_query({   :invoke => "annotatedSpectrumImageText", 
+            :task => @psm.dataset.task_id,
+            :block => "0",
+            :file => "FILE->peak/" + @psm.filename,
+            :scan => @psm.scan,
+            :peptide => "*..*",
+            :dataset => @psm.dataset.name,
+            :jsonp => "1"})
+        
+        @remote_peaks_url = remote_server_url + parameters_string
+    elsif @psm.dataset.name.include? "MSGFDB"
+        remote_server_url = "http://proteomics2.ucsd.edu" + "/ProteoSAFe/DownloadResultFile?"
     
-    @remote_peaks_url = remote_server_url + parameters_string
 
+        parameters_string = Rack::Utils.build_query({   :invoke => "annotatedSpectrumImageText", 
+            :task => @psm.dataset.task_id,
+            :block => "0",
+            :file => "FILE->spec/" + @psm.internalfilename,
+            :scan => @psm.scan,
+            :peptide => "*..*",
+            :task => @psm.dataset.task_id,
+            :jsonp => "1"})
+        
+        @remote_peaks_url = remote_server_url + parameters_string
+    end
 
 
     haml :psm_page

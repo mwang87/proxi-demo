@@ -130,6 +130,7 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
         psm_count += 1
         #puts psm_count.to_s + " of " + tab_data.length.to_s
         spectrum_file = psm_object["#SpecFile"]
+        internal_spectrum_file = psm_object["internalFilename"]
         scan =  psm_object["nativeID_scan"]
         peptide = psm_object["modified_sequence"]
         protein = psm_object["accession"]
@@ -146,7 +147,7 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
 	
         
         peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
-        psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, peptide)
+        psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, internal_spectrum_file, peptide)
         get_create_modification(modifications_list, peptide_db, variant_db, dataset_db, protein_db, psm_db)
         
     }

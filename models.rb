@@ -134,6 +134,7 @@ class Peptidespectrummatch
     include DataMapper::Resource
     property :id,               Serial
     property :filename,         String
+    property :internalfilename, String
     property :scan,             String
     property :tabfile,          String
     property :sequence,         String
