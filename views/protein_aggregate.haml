@@ -46,7 +46,7 @@
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{CGI.escape(@modification_input)}"} View PSMs
             %td{:style=>"vertical-align:middle"}= protein.name
             %td{:style=>"vertical-align:middle"}= protein.peptides.count
-            %td{:style=>"vertical-align:middle"}= protein.peptidespectrummatch.count
+            %td{:style=>"vertical-align:middle"}= Peptidespectrummatch.count(:protein => protein)
             %td{:style=>"vertical-align:middle"}= protein.modifications.count
             %td{:style=>"vertical-align:middle"}= protein.datasets.count
 
