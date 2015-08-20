@@ -5,10 +5,10 @@ def get_create_modification(modifications, peptide_db, variant_db, dataset_db, p
     modifications.each { |modification|
         modification_split = modification.split("-", 2)
 
-
         mod_name = modification_split[1]
         mod_location = modification_split[0]
-        modification_db = Modification.first_or_create(:name => mod_name)
+        mod_mass = mod_name.split(':')[1].to_f
+        modification_db = Modification.first_or_create(:name => mod_name, :mass => mod_mass)
 
         #Creating connection
         mod_variant_db = ModificationVariant.first_or_create(:modification => modification_db, 
