@@ -29,6 +29,7 @@
             %th
             %th 
             %th Modification Name
+            %th Modification Mass
     - @all_modifications_display.each do |modification|
         %tr
             %td
@@ -40,6 +41,7 @@
             %td
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px", :href => "/protein/aggregateview?mod=#{CGI.escape(modification.name)}"} View Proteins
             %td{:style=>"vertical-align:middle"}= modification.name
+            %td{:style=>"vertical-align:middle"}= modification.mass
 
 
 :javascript

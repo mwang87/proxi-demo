@@ -50,6 +50,9 @@ get '/psms/aggregateview' do
     modification = params[:mod]
     dataset_query = params[:dataset]
 
+    minimum_mass = params[:mod_mass_minimum]
+    maximum_mass = params[:mod_mass_maximum]
+
     sort_direction = params[:sort]
     sort_type = params[:sorttype]
 
@@ -77,6 +80,14 @@ get '/psms/aggregateview' do
         sort_type = ""
     end
 
+    if minimum_mass == nil
+        minimum_mass = ""
+    end
+
+    if maximum_mass == nil
+        maximum_mass = ""
+    end
+
 
     #Web Rendering Code
     @protein_input = protein
@@ -84,7 +95,11 @@ get '/psms/aggregateview' do
     @modification_input = modification
     @dataset_input = dataset_query
 
+    @mod_minimum = minimum_mass
+    @mod_maximum = maximum_mass
+
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification) + "&dataset=" + dataset_query
+    @param_string += "&mod_min=" + @mod_minimum + "&mod_max=" + @mod_maximum
     @sort_string = "&sort=" + sort_direction + "&sorttype=" + sort_type
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
@@ -121,6 +136,18 @@ get '/psms/aggregateview' do
         mod_db = Modification.first(:name => modification)
         query_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
         count_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
+    elsif minimum_mass.length > 0 or maximum_mass.length > 0
+        mod_mass_minimum = -999
+        mod_mass_maximum = 999
+        if minimum_mass.length > 0
+            mod_mass_minimum = minimum_mass.to_f
+        end
+        if maximum_mass.length > 0
+            mod_mass_maximum = maximum_mass.to_f
+        end
+        mod_db = Modification.all(:mass.gt => mod_mass_minimum, :mass.lt => mod_mass_maximum)
+        query_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
+        count_parameters[:modificationpeptidespectrummatch] = ModificationPeptidespectrummatch.all(:modification => mod_db)
     end
 
     if dataset_query.length > 2
@@ -138,7 +165,6 @@ get '/psms/aggregateview' do
                 full_datasets_db += dataset_db
             end
         }
-
         
         query_parameters[:dataset] = full_datasets_db
         count_parameters[:dataset] = full_datasets_db

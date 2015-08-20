@@ -58,6 +58,7 @@ class Modification
     include DataMapper::Resource
     property :id,               Serial
     property :name,             String
+    property :mass,             Float
 
     has n, :proteins, :through => :modificationprotein
     has n, :peptides, :through => :modificationpeptide
