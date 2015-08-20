@@ -3,7 +3,9 @@
 def get_create_modification(modifications, peptide_db, variant_db, dataset_db, protein_db, psm_db)
 	#Adding Modifications
     modifications.each { |modification|
-        modification_split = modification.split("-")
+        modification_split = modification.split("-", 2)
+
+
         mod_name = modification_split[1]
         mod_location = modification_split[0]
         modification_db = Modification.first_or_create(:name => mod_name)
