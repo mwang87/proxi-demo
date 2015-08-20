@@ -27,12 +27,14 @@
             %th
             %th
             %th
+            %th
             %th 
                 Sequence
                 %div.btn-group{:role => "group"}
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down&sorttype=sequence"}
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=sequence"}
             %th PSM Count
+            %th Variant Count
             %th Mod Count
             %th Dataset Count
     - @all_peptides.each do |peptide|
@@ -43,8 +45,11 @@
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/dataset/aggregateview?peptide=#{peptide.sequence}&protein=#{@protein_input}&mod=#{CGI.escape(@modification_input)}"} View Datasets
             %td
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{peptide.sequence}&protein=#{@protein_input}&mod=#{CGI.escape(@modification_input)}"} View PSMs
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/variants/aggregateview?peptide=#{peptide.sequence}&protein=#{@protein_input}&mod=#{CGI.escape(@modification_input)}"} View Variants
             %td{:style=>"vertical-align:middle"}= peptide.sequence
             %td{:style=>"vertical-align:middle"}= peptide.peptidespectrummatch.count
+            %td{:style=>"vertical-align:middle"}= peptide.variant.count
             %td{:style=>"vertical-align:middle"}= peptide.modifications.count
             %td{:style=>"vertical-align:middle"}= peptide.datasets.count
 

@@ -43,14 +43,6 @@ get '/peptide/aggregateview' do
 
     #Actual Processing  
 
-    filter_protein = false
-    filter_peptide = false
-    filter_mod = false
-
-    #DB Fields
-    peptides_db = nil
-    protein_db = nil
-    mod_db = nil
 
     query_parameters = Hash.new
     query_parameters[:offset]  = (page_number - 1) * PAGINATION_SIZE
@@ -68,7 +60,6 @@ get '/peptide/aggregateview' do
     if peptide.length > 2
         filter_peptide = true
         query_peptide = "%" + peptide + "%"
-        peptides_db = Peptide.all(:sequence.like => query_peptide)
         query_parameters[:sequence.like] = query_peptide
         count_parameters[:sequence.like] = query_peptide
     end

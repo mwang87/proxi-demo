@@ -1,0 +1,38 @@
+- if @next_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 20px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@next_page}#{@sort_string}"} Next Page
+- if @previous_page != nil
+    %a.btn.btn-default.pull-right{:style=>"margin-right: 10px; margin-bottom: 20px", :href => "#{@request_path}?#{@param_string}&page=#{@previous_page}#{@sort_string}"} Prev Page
+
+%br
+%div
+    #{@total_count} Results
+%br
+
+
+
+%form{:action => "/variants/aggregateview", :method => "get"}
+    .form-group
+        %label{:for => "name"} Peptide
+        %input.form-control{:type => "text", :name => "peptide", :class => "text", :value => "#{@peptide_input}"}
+        %p
+        %label{:for => "aboutme"} Variant
+        %input.form-control{:type => "text", :name => "variant", :class => "text", :value => "#{@variant_input}"}
+        %p
+        %label{:for => "aboutme"} Modification
+        %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "#{@modification_input}", :class => "dataset_mod_input"}
+    %input.btn.btn-default{:type => "submit", :value => "Update Peptides"} 
+
+
+%table.table.table-striped.table-condensed.tablesorter
+    %thead
+        %tr
+            %th Variant
+            %th Peptide
+            %th PSM Count
+    - @all_variants.each do |variant|
+        %tr
+            %td{:style=>"vertical-align:middle"}= variant.sequence
+            %td{:style=>"vertical-align:middle"}= variant.peptide.sequence
+            %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&variant=#{CGI.escape(variant.sequence)}&mod=#{CGI.escape(@modification_input)}"}= variant.peptidespectrummatch.count
+

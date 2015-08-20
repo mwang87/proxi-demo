@@ -49,12 +49,17 @@ get '/psms/aggregateview' do
     peptide = params[:peptide]
     modification = params[:mod]
     dataset_query = params[:dataset]
+    variant = params[:variant]
 
     minimum_mass = params[:mod_mass_minimum]
     maximum_mass = params[:mod_mass_maximum]
 
     sort_direction = params[:sort]
     sort_type = params[:sorttype]
+
+    if variant == nil
+        variant = ""
+    end
 
     if protein == nil
         protein = ""
@@ -90,6 +95,7 @@ get '/psms/aggregateview' do
 
 
     #Web Rendering Code
+    @variant_input = variant
     @protein_input = protein
     @peptide_input = peptide
     @modification_input = modification
@@ -99,7 +105,7 @@ get '/psms/aggregateview' do
     @mod_maximum = maximum_mass
 
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification) + "&dataset=" + dataset_query
-    @param_string += "&mod_min=" + @mod_minimum + "&mod_max=" + @mod_maximum
+    @param_string += "&mod_min=" + @mod_minimum + "&mod_max=" + @mod_maximum + "&variant=" + CGI.escape(variant)
     @sort_string = "&sort=" + sort_direction + "&sorttype=" + sort_type
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
@@ -130,6 +136,12 @@ get '/psms/aggregateview' do
         peptides_db = Peptide.all(:sequence.like => query_peptide)
         query_parameters[:peptide] = peptides_db
         count_parameters[:peptide] = peptides_db
+    end
+
+    if variant.length > 2
+        query_variant = "%" + variant + "%"
+        query_parameters[:sequence.like] = query_variant
+        count_parameters[:sequence.like] = query_variant
     end
 
     if modification.length > 2

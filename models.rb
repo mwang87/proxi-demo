@@ -13,6 +13,7 @@ class Peptide
     has n, :proteins, :through => :peptideprotein
     has n, :datasets, :through => :datasetpeptide
     has n, :peptidespectrummatch
+    has n, :variant
 end
 
 class Dataset
