@@ -40,11 +40,11 @@ get '/dataset/aggregateview' do
     @modification_input = modification
 
     @param_string = "protein=" + protein + "&peptide=" + peptide + "&mod=" + CGI.escape(modification) + "&sequence=" + sequence
-    
+
     #@all_proteins = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
 
-    #Actual Processing  
+    #Actual Processing
 
     filter_protein = false
     filter_peptide = false

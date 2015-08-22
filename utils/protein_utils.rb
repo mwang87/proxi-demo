@@ -1,7 +1,7 @@
 
 def get_create_protein(protein_name)
     protein_object = Protein.first_or_create(:name => protein_name)
-    
+
     if protein_object.save
         #puts "SAVED"
     end

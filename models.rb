@@ -81,8 +81,17 @@ class Variant
 
     belongs_to :peptide
 
+    has n, :proteins, :through => :proteinvariant
     has n, :modifications, :through => :modificationvariant
     has n, :peptidespectrummatch
+end
+
+class ProteinVariant
+    include DataMapper::Resource
+    property :id,               Serial
+
+    belongs_to :variant
+    belongs_to :protein
 end
 
 class ModificationVariant
@@ -102,6 +111,7 @@ class Protein
     has n, :peptides, :through => :peptideprotein
     has n, :modifications, :through => :modificationprotein
     has n, :datasets, :through => :datasetprotein
+    has n, :variants, :through => :proteinvariant
 
     has n, :peptidespectrummatch
 end
@@ -109,7 +119,7 @@ end
 class DatasetProtein
     include DataMapper::Resource
     property :id,               Serial
-    
+
     belongs_to :protein
     belongs_to :dataset
 end
@@ -126,7 +136,7 @@ end
 class ModificationProtein
     include DataMapper::Resource
     property :id,               Serial
-    
+
     belongs_to :protein
     belongs_to :modification
 end
@@ -152,7 +162,7 @@ end
 class ModificationPeptidespectrummatch
     include DataMapper::Resource
     property :id,               Serial
-    
+
     belongs_to :peptidespectrummatch
     belongs_to :modification
 end
@@ -175,4 +185,3 @@ ModificationProtein.auto_migrate! unless ModificationProtein.storage_exists?
 ModificationPeptidespectrummatch.auto_migrate! unless ModificationPeptidespectrummatch.storage_exists?
 DatasetModification.auto_migrate! unless DatasetModification.storage_exists?
 DataMapper.auto_upgrade!
-

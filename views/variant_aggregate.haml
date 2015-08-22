@@ -20,7 +20,19 @@
         %p
         %label{:for => "aboutme"} Modification
         %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "#{@modification_input}", :class => "dataset_mod_input"}
-    %input.btn.btn-default{:type => "submit", :value => "Update Peptides"} 
+        %p
+
+        %label{:for => "aboutme"} Mod Mass
+        %div
+            %input.form-control{:type => "text", :name => "mod_mass_minimum", :class => "text", :value => "#{@mod_minimum}", :style => "width:49%;float:left;", :placeholder => "Minimum Mass"}
+            -
+            %input.form-control{:type => "text", :name => "mod_mass_maximum", :class => "text", :value => "#{@mod_maximum}", :style => "width:49%;float:right;", :placeholder => "Maximum Mass"}
+        %p
+        %p
+
+        %label{:for => "aboutme"} Protein
+        %input.form-control{:type => "text", :name => "protein", :class => "text", :value => "#{@protein_input}"}
+    %input.btn.btn-default{:type => "submit", :value => "Update Peptides"}
 
 
 %table.table.table-striped.table-condensed.tablesorter
@@ -35,4 +47,3 @@
             %td{:style=>"vertical-align:middle"}= variant.peptide.sequence
             %td
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&variant=#{CGI.escape(variant.sequence)}&mod=#{CGI.escape(@modification_input)}"}= variant.peptidespectrummatch.count
-

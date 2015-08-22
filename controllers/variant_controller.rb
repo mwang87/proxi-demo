@@ -11,6 +11,13 @@ get '/variants/aggregateview' do
     modification = params[:mod]
     variant = params[:variant]
 
+    minimum_mass = params[:mod_mass_minimum]
+    maximum_mass = params[:mod_mass_maximum]
+
+    if protein == nil
+        protein = ""
+    end
+
     if variant == nil
         variant = ""
     end
@@ -23,19 +30,32 @@ get '/variants/aggregateview' do
         modification = ""
     end
 
+    if minimum_mass == nil
+        minimum_mass = ""
+    end
+
+    if maximum_mass == nil
+        maximum_mass = ""
+    end
+
 
     #Web Rendering Code
     @variant_input = variant
     @peptide_input = peptide
     @modification_input = modification
+    @protein_input = protein
 
-    @param_string = "variant=" + CGI.escape(variant) + "&peptide=" + peptide + "&mod=" + CGI.escape(modification)
+    @mod_minimum = minimum_mass
+    @mod_maximum = maximum_mass
+
+    @param_string = "variant=" + CGI.escape(variant) + "&peptide=" + peptide + "&mod=" + CGI.escape(modification) + "&protein=" + @protein_input
+    @param_string += "&mod_min=" + @mod_minimum + "&mod_max=" + @mod_maximum
 
     #@all_proteins_autocomplete = Protein.all().map(&:name)
     @all_modifications = Modification.all().map(&:name)
 
 
-    #Actual Processing  
+    #Actual Processing
 
     query_parameters = Hash.new
     query_parameters[:offset]  = (@page_number - 1) * PAGINATION_SIZE
@@ -50,6 +70,12 @@ get '/variants/aggregateview' do
         count_parameters[:peptide] = peptides_db
     end
 
+    if protein.length > 2
+        protein_db = Protein.first(:name => protein)
+        query_parameters[:proteinvariant] = ProteinVariant.all(:protein => protein_db)
+        count_parameters[:proteinvariant] = ProteinVariant.all(:protein => protein_db)
+    end
+
     if variant.length > 2
         query_variant = "%" + variant + "%"
         query_parameters[:sequence.like] = query_variant
@@ -60,6 +86,18 @@ get '/variants/aggregateview' do
         mod_db = Modification.first(:name => modification)
         query_parameters[:modificationvariant] = ModificationPeptide.all(:modification => mod_db)
         count_parameters[:modificationvariant] = ModificationPeptide.all(:modification => mod_db)
+    elsif minimum_mass.length > 0 or maximum_mass.length > 0
+        mod_mass_minimum = -999
+        mod_mass_maximum = 999
+        if minimum_mass.length > 0
+            mod_mass_minimum = minimum_mass.to_f
+        end
+        if maximum_mass.length > 0
+            mod_mass_maximum = maximum_mass.to_f
+        end
+        mod_db = Modification.all(:mass.gt => mod_mass_minimum, :mass.lt => mod_mass_maximum)
+        query_parameters[:modificationvariant] = ModificationVariant.all(:modification => mod_db)
+        count_parameters[:modificationvariant] = ModificationVariant.all(:modification => mod_db)
     end
 
     @all_variants = Variant.all(query_parameters)
@@ -98,7 +136,7 @@ end
 get '/variant/:variant/dataset/list' do
 	variant_seq = params[:variant]
     peptide_object = Peptide.first(:sequence => variant_seq)
-    
+
     @datasets = peptide_object.datasets
     @peptide = variant_seq
     haml :variant_datasets
@@ -111,7 +149,7 @@ get '/variant/:variant/dataset/:dataset/psm/list' do
 
 	#variant_dataset_db = DatasetPeptide.first(:peptide => variant_db, :dataset => dataset_db)
 
-	#psms = 
+	#psms =
 
 	@psms = Datasetpeptidespectrummatch.all(:DatasetPeptide => {:peptide => variant_db, :dataset => dataset_db})
 
@@ -133,9 +171,9 @@ end
 get '/peptide/:peptide/dataset/:dataset/variants/list' do
     peptide_db = Basicpeptide.first(:sequence => params[:peptide])
     dataset_db = Dataset.first(:name => params[:dataset])
-    
+
     join_dataset_peptide = BasicpeptideDataset.first(:dataset => dataset_db, :basicpeptide => peptide_db)
-    
+
     #@variants = Peptide.all(:basicpeptide => {:sequence => params[:peptide]}, :datasets => {:id => params[:dataset]})
     #@variants = Datasetpeptidespectrummatch.all(:DatasetPeptide => join_dataset_peptide)
     haml :variant_all

@@ -18,7 +18,7 @@
         %p
         %label{:for => "aboutme"} Modification
         %input.form-control{:type => "text", :name => "mod", :class => "text", :value => "#{@modification_input}", :class => "dataset_mod_input"}
-    %input.btn.btn-default{:type => "submit", :value => "Update Proteins"} 
+    %input.btn.btn-default{:type => "submit", :value => "Update Proteins"}
 
 
 %table.table.table-striped.table-condensed.tablesorter
@@ -28,11 +28,13 @@
             %th
             %th
             %th
+            %th
                 Protein Name
                 %div.btn-group{:role => "group"}
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-down{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=down&sorttype=protein"}
                     %a.btn.btn-default.btn-xs.glyphicon.glyphicon-menu-up{:style=>"", :href => "#{@request_path}?#{@param_string}&page=#{@page_number}&sort=up&sorttype=protein"}
             %th Peptides
+            %th Peptide Variants
             %th PSMs
             %th Mods
             %th Datasets
@@ -43,9 +45,12 @@
             %td
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/peptide/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{CGI.escape(@modification_input)}"} View Peptides
             %td
+                %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/variants/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{CGI.escape(@modification_input)}"} View Variants
+            %td
                 %a.btn.btn-default.btn-sm.pull-right{:style=>"margin-right: 20px;", :href => "/psms/aggregateview?peptide=#{@peptide_input}&protein=#{protein.name}&mod=#{CGI.escape(@modification_input)}"} View PSMs
             %td{:style=>"vertical-align:middle"}= protein.name
             %td{:style=>"vertical-align:middle"}= protein.peptides.count
+            %td{:style=>"vertical-align:middle"}= protein.variants.count
             %td{:style=>"vertical-align:middle"}= Peptidespectrummatch.count(:protein => protein)
             %td{:style=>"vertical-align:middle"}= protein.modifications.count
             %td{:style=>"vertical-align:middle"}= protein.datasets.count
