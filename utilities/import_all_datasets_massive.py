@@ -6,6 +6,11 @@ import ming_parallel_library
 import os
 import sys
 
+#CONSTANTS
+PAGE_SIZE = 500
+PARALLELISM = 10
+root_url = "http://massive.ucsd.edu"
+
 #Returns all datasets as a list of dataset objects
 def get_all_datasets():
     SERVER_URL = "http://gnps.ucsd.edu/ProteoSAFe/datasets_json.jsp"
@@ -28,7 +33,7 @@ def get_metadata_for_tab_file(root_url, task_id, tab_id):
 
 def process_all_populate_parameters(parameters_list, parallel=False):
     if parallel:
-        ming_parallel_library.run_parallel_job(run_populate_parameters, parameters_list, 100)
+        ming_parallel_library.run_parallel_job(run_populate_parameters, parameters_list, PARALLELISM)
     else:
         for parameter in parameters_list:
             run_populate_parameters(parameter)
@@ -47,8 +52,7 @@ def run_populate_parameters(parameters):
     os.system(cmd)
     return "DONE"
 
-PAGE_SIZE = 50
-root_url = "http://massive.ucsd.edu"
+
 
 def import_results_from_dataset(dataset_id):
     all_populate_parameters = []
@@ -91,7 +95,7 @@ def import_results_from_dataset(dataset_id):
     process_all_populate_parameters(all_populate_parameters, True)
 
 def usage():
-    print "<dataset id>"
+    print "<dataset id> Gets all datasets if no parameters"
 
 def main():
     #Importing just one dataset

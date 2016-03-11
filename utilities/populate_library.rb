@@ -124,7 +124,7 @@ def import_dataset_tab_psm_page(dataset_id, task_id, tsv_id, db_filename, root_u
     puts tab_information_url
 
     tab_data = JSON.parse(http_get(tab_information_url))["row_data"]
-    puts tab_data
+    #puts tab_data
 
     dataset_db = get_create_dataset(dataset_id, task_id)
 
@@ -135,7 +135,7 @@ def import_dataset_tab_psm_page(dataset_id, task_id, tsv_id, db_filename, root_u
         peptide = psm_object["modified_sequence"]
         protein = psm_object["accession"]
         modification_string = psm_object["modifications"]
-        puts modification_string
+        #puts modification_string
 
         #Adding Proteins
         protein_db = get_create_protein(protein)
@@ -146,7 +146,7 @@ def import_dataset_tab_psm_page(dataset_id, task_id, tsv_id, db_filename, root_u
             modifications_list = modification_string.split(',')
         end
 
-        puts modifications_list
+        #puts modifications_list
 
 
         peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
