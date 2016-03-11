@@ -30,12 +30,12 @@ def import_results_dataset(dataset_id)
 
     result = http_get(dataset_information)
     #print result
-    
+
     dataset_information = JSON.parse(result)
     task_id = dataset_information["task"]
     #puts task_id
     tab_list_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=view_result_list"
-    
+
     tabs_list = JSON.parse(http_get(tab_list_url))["blockData"]
 
     #Singly Threaded
@@ -60,7 +60,7 @@ def import_results_task(task_id)
     #puts task_id
     tab_list_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=view_result_list"
     puts tab_list_url
-    
+
     tabs_list = JSON.parse(http_get(tab_list_url))["blockData"]
 
     task_label = task_workflow + " - " + task_id + " - " + task_description
@@ -75,7 +75,7 @@ end
 
 #Takes a list of tab files, single threaded, one process
 def import_all_tab_files(tabs_list, dataset_id, task_id, root_url)
-    tabs_list.each { |tab_object| 
+    tabs_list.each { |tab_object|
         tab_file = tab_object["MzTab_file"]
         import_dataset_tab_psm_file(dataset_id, task_id, tab_file, root_url)
     }
@@ -87,14 +87,14 @@ def import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
     running_parallelism = 0
     wait_seconds = 10
 
-    tabs_list.each { |tab_object| 
+    tabs_list.each { |tab_object|
         tab_file = tab_object["MzTab_file"]
-        
+
         running_parallelism += 1
 
         fork do
             #import_dataset_tab_psm_file(dataset_id, task_id, tab_file, root_url)
-            import_tab_cmd = "ruby ./populate_parallel_tab.rb " 
+            import_tab_cmd = "ruby ./populate_parallel_tab.rb "
             import_tab_cmd += dataset_id + " "
             import_tab_cmd += task_id + " "
             import_tab_cmd += tab_file + " "
@@ -110,7 +110,7 @@ def import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
         if running_parallelism == max_parallelism
             Process.waitall
             running_parallelism = 0
-        end   
+        end
     }
 
     Process.waitall
@@ -118,39 +118,60 @@ end
 
 
 def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
-    tab_information_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=group_by_spectrum&file=" + tsv_id + "&show=true"
-    tab_data = JSON.parse(http_get(tab_information_url))["blockData"]
+    offset = 0
+    pageSize = 100
 
-    puts "Parsing Tab: " + tsv_id + " with " + tab_data.length.to_s + " entries "
-    
-    psm_count = 0
-    dataset_db = get_create_dataset(dataset_id, task_id)
-    
-    tab_data.each{ |psm_object|
-        psm_count += 1
-        #puts psm_count.to_s + " of " + tab_data.length.to_s
-        spectrum_file = psm_object["#SpecFile"]
-        internal_spectrum_file = psm_object["internalFilename"]
-        scan =  psm_object["nativeID_scan"]
-        peptide = psm_object["modified_sequence"]
-        protein = psm_object["accession"]
-        modification_string = psm_object["modifications"]
+    #Hit the URL first to make sure the sqlite database is available
+    tab_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=group_by_spectrum" + "&file=" + tsv_id
+    http_get(tab_url)
+    puts tsv_id
 
-        #Adding Proteins
-        protein_db = get_create_protein(protein)
-        protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
+    while(1) do
+        #puts tsv_id
+        tab_db_filename = "group_by_spectrum" + "-main_" + tsv_id.gsub(".mzTab", ".db")
+        tab_information_url = root_url + "/ProteoSAFe/QueryResult?task=" + task_id + "&file=" + tab_db_filename
+        tab_information_url += "&pageSize=" + pageSize.to_s() + "&offset=" + offset.to_s()
+        #puts tab_information_url
+        tab_data = JSON.parse(http_get(tab_information_url))["row_data"]
+        offset += pageSize
+        #puts tab_data.length.to_s()
 
-        modifications_list = Array.new
-        if modification_string != "null"
-            modifications_list = modification_string.split(',')
+        #puts "Parsing Tab: " + tsv_id + " with " + tab_data.length.to_s + " entries "
+
+        psm_count = 0
+        dataset_db = get_create_dataset(dataset_id, task_id)
+
+        tab_data.each{ |psm_object|
+            psm_count += 1
+            #puts psm_count.to_s + " of " + tab_data.length.to_s
+            spectrum_file = psm_object["#SpecFile"]
+            internal_spectrum_file = psm_object["internalFilename"]
+            scan =  psm_object["nativeID_scan"]
+            peptide = psm_object["modified_sequence"]
+            protein = psm_object["accession"]
+            modification_string = psm_object["modifications"]
+
+            #Adding Proteins
+            protein_db = get_create_protein(protein)
+            protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
+
+            modifications_list = Array.new
+            if modification_string != "null"
+                modifications_list = modification_string.split(',')
+            end
+
+
+            peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
+            psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, internal_spectrum_file, peptide)
+            get_create_modification(modifications_list, peptide_db, variant_db, dataset_db, protein_db, psm_db)
+
+        }
+
+        if tab_data.length < pageSize then
+            return
         end
-	
-        
-        peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
-        psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, internal_spectrum_file, peptide)
-        get_create_modification(modifications_list, peptide_db, variant_db, dataset_db, protein_db, psm_db)
-        
-    }
+    end
+
 end
 
 ###Testing Fork Logic
