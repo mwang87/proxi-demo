@@ -4,6 +4,7 @@ import requests
 import json
 import ming_parallel_library
 import os
+import sys
 
 #Returns all datasets as a list of dataset objects
 def get_all_datasets():
@@ -49,52 +50,62 @@ def run_populate_parameters(parameters):
 PAGE_SIZE = 50
 root_url = "http://massive.ucsd.edu"
 
-def main():
+def import_results_from_dataset(dataset_id):
     all_populate_parameters = []
 
-    all_datasets = get_all_datasets()
-    for dataset in all_datasets:
-        if dataset["status"] == "Complete":
-            dataset_id = dataset["dataset"]
-            dataset_information_url = root_url + "/ProteoSAFe/MassiveServlet?massiveid=" + dataset_id + "&function=massiveinformation"
+    dataset_information_url = root_url + "/ProteoSAFe/MassiveServlet?massiveid=" + dataset_id + "&function=massiveinformation"
 
-            ###SHOULD CHECK IF DATASET IS ALREADY IN THERE, IF SO, STOP
-            result = requests.get(dataset_information_url)
+    ###SHOULD CHECK IF DATASET IS ALREADY IN THERE, IF SO, STOP
+    result = requests.get(dataset_information_url)
+    dataset_information = json.loads(result.text)
 
-            dataset_information = json.loads(result.text)
-            task_id = dataset_information["task"]
-            #puts task_id
-            tab_list_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=view_result_list"
+    #Checking if complete
+    if dataset_information["complete"] != "true":
+        print dataset_id + " Not Complete"
+        return
 
-            tabs_list = json.loads(requests.get(tab_list_url).text)["blockData"]
+    task_id = dataset_information["task"]
+    #puts task_id
+    tab_list_url = root_url + "/ProteoSAFe/result_json.jsp?task=" + task_id + "&view=view_result_list"
 
-            for tab_obj in tabs_list:
-                #print dataset_id + "\t" + tab_obj["MzTab_file"]
-                tab_meta_data = get_metadata_for_tab_file(root_url, task_id, tab_obj["MzTab_file"])
-                range_of_offsets = range(0, int(tab_meta_data["total_rows"]), PAGE_SIZE)
-                for offset in range_of_offsets:
-                    db_populate_parameters = {}
-                    db_populate_parameters["total_rows"] = tab_meta_data["total_rows"]
-                    db_populate_parameters["tab_file"] = tab_obj["MzTab_file"]
-                    db_populate_parameters["db_file"] = tab_meta_data["db_file"]
-                    db_populate_parameters["offset"] = offset
-                    db_populate_parameters["pagesize"] = PAGE_SIZE
-                    db_populate_parameters["rooturl"] = root_url
-                    db_populate_parameters["datasetid"] = dataset_id
-                    db_populate_parameters["taskid"] = task_id
+    tabs_list = json.loads(requests.get(tab_list_url).text)["blockData"]
 
-                    all_populate_parameters.append(db_populate_parameters)
+    for tab_obj in tabs_list:
+        #print dataset_id + "\t" + tab_obj["MzTab_file"]
+        tab_meta_data = get_metadata_for_tab_file(root_url, task_id, tab_obj["MzTab_file"])
+        range_of_offsets = range(0, int(tab_meta_data["total_rows"]), PAGE_SIZE)
+        for offset in range_of_offsets:
+            db_populate_parameters = {}
+            db_populate_parameters["total_rows"] = tab_meta_data["total_rows"]
+            db_populate_parameters["tab_file"] = tab_obj["MzTab_file"]
+            db_populate_parameters["db_file"] = tab_meta_data["db_file"]
+            db_populate_parameters["offset"] = offset
+            db_populate_parameters["pagesize"] = PAGE_SIZE
+            db_populate_parameters["rooturl"] = root_url
+            db_populate_parameters["datasetid"] = dataset_id
+            db_populate_parameters["taskid"] = task_id
 
+            all_populate_parameters.append(db_populate_parameters)
 
-            #Testing
-            #break
-    #Testing
-    exit(0)
+    #Doing this shit
     process_all_populate_parameters(all_populate_parameters, True)
 
-    #print "MING"
-    #cmd = "ruby ./populate_db.rb " + dataset["dataset"] + " &"
-    #print cmd
+def usage():
+    print "<dataset id>"
+
+def main():
+    #Importing just one dataset
+    print len(sys.argv)
+    if len(sys.argv) > 1:
+        dataset_id = sys.argv[1]
+        import_results_from_dataset(dataset_id)
+    else:
+        #All datasets
+        all_datasets = get_all_datasets()
+        for dataset in all_datasets:
+            if dataset["status"] == "Complete":
+                import_results_from_dataset(dataset["dataset"])
+
 
 
 if __name__ == "__main__":
