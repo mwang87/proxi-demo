@@ -116,6 +116,45 @@ def import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
     Process.waitall
 end
 
+def import_dataset_tab_psm_page(dataset_id, task_id, tsv_id, root_url, offset, pageSize):
+    tab_db_filename = "group_by_spectrum" + "-main_" + tsv_id.gsub(".mzTab", ".db")
+    tab_information_url = root_url + "/ProteoSAFe/QueryResult?task=" + task_id + "&file=" + tab_db_filename
+    tab_information_url += "&pageSize=" + pageSize.to_s() + "&offset=" + offset.to_s()
+
+    tab_data = JSON.parse(http_get(tab_information_url))["row_data"]
+
+    dataset_db = get_create_dataset(dataset_id, task_id)
+
+    tab_data.each{ |psm_object|
+        psm_count += 1
+        #puts psm_count.to_s + " of " + tab_data.length.to_s
+        spectrum_file = psm_object["#SpecFile"]
+        internal_spectrum_file = psm_object["internalFilename"]
+        scan =  psm_object["nativeID_scan"]
+        peptide = psm_object["modified_sequence"]
+        protein = psm_object["accession"]
+        modification_string = psm_object["modifications"]
+        puts modification_string
+
+        #Adding Proteins
+        protein_db = get_create_protein(protein)
+        protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
+
+        modifications_list = Array.new
+        if modification_string != "null"
+            modifications_list = modification_string.split(',')
+        end
+
+        puts modifications_list
+
+
+        peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
+        psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, internal_spectrum_file, peptide)
+        get_create_modification(modifications_list, peptide_db, variant_db, dataset_db, protein_db, psm_db)
+    }
+
+    return tab_data.length
+
 
 def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     offset = 0
@@ -127,52 +166,57 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
     puts tsv_id
 
     while(1) do
-        #puts tsv_id
-        tab_db_filename = "group_by_spectrum" + "-main_" + tsv_id.gsub(".mzTab", ".db")
-        tab_information_url = root_url + "/ProteoSAFe/QueryResult?task=" + task_id + "&file=" + tab_db_filename
-        tab_information_url += "&pageSize=" + pageSize.to_s() + "&offset=" + offset.to_s()
-        #puts tab_information_url
-        tab_data = JSON.parse(http_get(tab_information_url))["row_data"]
+        results_gotten = import_dataset_tab_psm_page(dataset_id, task_id, tsv_id, root_url, offset, pageSize)
         offset += pageSize
+
+        if results_gotten < pageSize then
+            return
+        end
+
+        #puts tsv_id
+        #tab_db_filename = "group_by_spectrum" + "-main_" + tsv_id.gsub(".mzTab", ".db")
+        #tab_information_url = root_url + "/ProteoSAFe/QueryResult?task=" + task_id + "&file=" + tab_db_filename
+        #tab_information_url += "&pageSize=" + pageSize.to_s() + "&offset=" + offset.to_s()
+        #puts tab_information_url
+        #tab_data = JSON.parse(http_get(tab_information_url))["row_data"]
+
         #puts tab_data.length.to_s()
 
         #puts "Parsing Tab: " + tsv_id + " with " + tab_data.length.to_s + " entries "
 
-        psm_count = 0
-        dataset_db = get_create_dataset(dataset_id, task_id)
+        #psm_count = 0
+        #dataset_db = get_create_dataset(dataset_id, task_id)
 
-        tab_data.each{ |psm_object|
-            psm_count += 1
-            #puts psm_count.to_s + " of " + tab_data.length.to_s
-            spectrum_file = psm_object["#SpecFile"]
-            internal_spectrum_file = psm_object["internalFilename"]
-            scan =  psm_object["nativeID_scan"]
-            peptide = psm_object["modified_sequence"]
-            protein = psm_object["accession"]
-            modification_string = psm_object["modifications"]
-            puts modification_string
+        # tab_data.each{ |psm_object|
+        #     psm_count += 1
+        #     #puts psm_count.to_s + " of " + tab_data.length.to_s
+        #     spectrum_file = psm_object["#SpecFile"]
+        #     internal_spectrum_file = psm_object["internalFilename"]
+        #     scan =  psm_object["nativeID_scan"]
+        #     peptide = psm_object["modified_sequence"]
+        #     protein = psm_object["accession"]
+        #     modification_string = psm_object["modifications"]
+        #     puts modification_string
+        #
+        #     #Adding Proteins
+        #     protein_db = get_create_protein(protein)
+        #     protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
+        #
+        #     modifications_list = Array.new
+        #     if modification_string != "null"
+        #         modifications_list = modification_string.split(',')
+        #     end
+        #
+        #     puts modifications_list
+        #
+        #
+        #     peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
+        #     psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, internal_spectrum_file, peptide)
+        #     get_create_modification(modifications_list, peptide_db, variant_db, dataset_db, protein_db, psm_db)
+        #
+        # }
 
-            #Adding Proteins
-            protein_db = get_create_protein(protein)
-            protein_dataset_join = create_dataset_protein_link(protein_db, dataset_db)
 
-            modifications_list = Array.new
-            if modification_string != "null"
-                modifications_list = modification_string.split(',')
-            end
-
-            puts modifications_list
-
-
-            peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
-            psm_db = get_create_psm(variant_db, dataset_db, protein_db, peptide_db, tsv_id, scan, spectrum_file, internal_spectrum_file, peptide)
-            get_create_modification(modifications_list, peptide_db, variant_db, dataset_db, protein_db, psm_db)
-
-        }
-
-        if tab_data.length < pageSize then
-            return
-        end
     end
 
 end

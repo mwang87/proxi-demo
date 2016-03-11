@@ -18,8 +18,9 @@ def main():
     all_datasets = get_all_datasets()
     for dataset in all_datasets:
         if dataset["status"] == "Complete":
-            cmd = "ruby ./populate_db.rb " + dataset["dataset"] + " &"
-            print cmd
+            print "MING"
+            #cmd = "ruby ./populate_db.rb " + dataset["dataset"] + " &"
+            #print cmd
 
 
 if __name__ == "__main__":
