@@ -83,7 +83,7 @@ end
 
 #Takes a list of tab files, multiprocess threaded
 def import_all_tab_files_parallel(tabs_list, dataset_id, task_id, root_url)
-    max_parallelism = 2
+    max_parallelism = 10
     running_parallelism = 0
     wait_seconds = 10
 
@@ -150,6 +150,7 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
             peptide = psm_object["modified_sequence"]
             protein = psm_object["accession"]
             modification_string = psm_object["modifications"]
+            puts modification_string
 
             #Adding Proteins
             protein_db = get_create_protein(protein)
@@ -159,6 +160,8 @@ def import_dataset_tab_psm_file(dataset_id, task_id, tsv_id, root_url)
             if modification_string != "null"
                 modifications_list = modification_string.split(',')
             end
+
+            puts modifications_list
 
 
             peptide_db, variant_db = get_create_peptide(peptide, dataset_db, protein_db)
